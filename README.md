@@ -1,1 +1,1 @@
-# pca-explorer
+# PCA-explorer

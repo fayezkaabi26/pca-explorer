@@ -1,24 +1,17 @@
-import io
 import dash
 from dash.dependencies import Input, Output
 import dash_core_components as dcc
 import dash_html_components as html
-import flask
-import os
 import pandas as pd
 import urllib.parse
-import plotly.graph_objs as go
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 from sklearn.decomposition import PCA
 import numpy as np
-import math
 import scipy.stats
-import dash_table
-from dash_table.Format import Format, Scheme
-from colour import Color
 
-server = flask.Flask(__name__)
-app = dash.Dash(__name__, server=server)
+
+app = dash.Dash()
+server = app.server
 file_path = "/Users/mythilisutharson/documents/cam_work/explorer_data/AAML_Oxygen_Data.csv"
 df = pd.read_csv(file_path)
 dff = df.select_dtypes(exclude=['object'])

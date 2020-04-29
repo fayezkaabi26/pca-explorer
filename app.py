@@ -12,7 +12,7 @@ import scipy.stats
 
 app = dash.Dash()
 server = app.server
-file_path = "/Users/mythilisutharson/documents/cam_work/explorer_data/AAML_Oxygen_Data.csv"
+file_path = "https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/AAML_Oxygen_Data.csv"
 df = pd.read_csv(file_path)
 dff = df.select_dtypes(exclude=['object'])
 

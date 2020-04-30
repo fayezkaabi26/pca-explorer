@@ -15,11 +15,12 @@ import scipy.stats
 import dash_table
 from dash_table.Format import Format, Scheme
 from colour import Color
+import gunicorn
 # from waitress import serve
 
 external_stylesheets = ["https://codepen.io/sutharson/pen/dyYzEGZ.css"]
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-server = app.server
+server = flask.Flask(__name__) 
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
 # "external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"
 # https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/LoadingStatusStyleSheet.css
 styles = {

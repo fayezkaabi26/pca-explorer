@@ -1,6 +1,7 @@
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import gunicorn as gunicorn
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State
 import flask
@@ -14,7 +15,7 @@ import scipy.stats
 import dash_table
 from dash_table.Format import Format, Scheme
 from colour import Color
-
+from waitress import serve
 
 external_stylesheets = ["https://codepen.io/sutharson/pen/dyYzEGZ.css"]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -157,7 +158,7 @@ app.layout = html.Div([
         html.Img(src='https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/A2ML-logo.png',
                  height='55', width='125', style={'float': 'right', 'display': 'inline-block', 'padding-right': '2%'}),
         html.H1("Principal Component Analysis Visualisation Tools",
-                style={'display': 'inline-block', 'padding-left': '10%', 'text-align': 'center', 'fontSize': 32,
+                style={'display': 'inline-block', 'padding-left': '15%', 'text-align': 'center', 'fontSize': 32,
                        'color': 'white', }),
         html.H1("...", style={'fontColor': '#3c3c3c', 'fontSize': 6})
     ], style={'backgroundColor': '#3d0027'}),
@@ -2417,8 +2418,12 @@ def update_output(all_custom, outlier, input):
     return data, columns, csv_string
 
 
+# serve(server)
 if __name__ == '__main__':
     # For Development only, otherwise use gunicorn or uwsgi to launch, e.g.
     # gunicorn -b 0.0.0.0:8050 index:app.server
     app.run_server(debug=False)
+
+# OUTPUT: YOU SHOULD USE AT LEAST X PRINCIPAL COMPONENTS (≥85% of explained variance)
+
 

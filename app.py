@@ -16,9 +16,11 @@ from dash_table.Format import Format, Scheme
 from colour import Color
 
 
-app = dash.Dash()
+external_stylesheets = ["https://codepen.io/sutharson/pen/dyYzEGZ.css"]
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
-
+# "external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"
+# https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/LoadingStatusStyleSheet.css
 styles = {
     'pre': {
         'border': 'thin lightgrey solid',

@@ -2417,3 +2417,4 @@ def update_output(all_custom, outlier, input):
     return data, columns, csv_string
 
 
+

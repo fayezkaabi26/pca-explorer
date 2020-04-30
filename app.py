@@ -2417,7 +2417,3 @@ def update_output(all_custom, outlier, input):
     return data, columns, csv_string
 
 
-if __name__ == '__main__':
-    app.run_server()
-
-# OUTPUT: YOU SHOULD USE AT LEAST X PRINCIPAL COMPONENTS (≥85% of explained variance)

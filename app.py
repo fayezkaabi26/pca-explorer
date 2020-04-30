@@ -15,7 +15,7 @@ import scipy.stats
 import dash_table
 from dash_table.Format import Format, Scheme
 from colour import Color
-from waitress import serve
+# from waitress import serve
 
 external_stylesheets = ["https://codepen.io/sutharson/pen/dyYzEGZ.css"]
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)

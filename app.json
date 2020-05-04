@@ -1,0 +1,6 @@
+{
+"name":"Principal Component Analysis Visualisation Tools",
+"description": "A dash app",
+"repository":"https://github.com/aaml-analytics/pca-explorer",
+"keywords": ["node", "express","static"]
+}

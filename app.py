@@ -1,7 +1,9 @@
+import base64
+import io
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-import gunicorn as gunicorn
+import gunicorn
 import plotly.graph_objs as go
 from dash.dependencies import Input, Output, State
 import flask
@@ -15,12 +17,15 @@ import scipy.stats
 import dash_table
 from dash_table.Format import Format, Scheme
 from colour import Color
-import gunicorn
+import dash_bootstrap_components as dbc
+
 # from waitress import serve
 
-external_stylesheets = ["https://codepen.io/sutharson/pen/dyYzEGZ.css"]
-server = flask.Flask(__name__) 
-app = dash.Dash(__name__, external_stylesheets=external_stylesheets, server=server)
+external_stylesheets = [dbc.themes.BOOTSTRAP, 'https://codepen.io/chriddyp/pen/bWLwgP.css',
+                        "https://codepen.io/sutharson/pen/dyYzEGZ.css"]
+
+app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+server = app.server
 # "external_url": "https://codepen.io/chriddyp/pen/brPBPO.css"
 # https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/LoadingStatusStyleSheet.css
 styles = {
@@ -46,105 +51,6 @@ tab_selected_style = {
     'padding': '6px'
 }
 
-####################
-# ORIGINAL DATA NOT SCALED#
-####################
-file_path = "https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/AAML_Oxygen_Data.csv"
-df = pd.read_csv(file_path)
-dff = df.select_dtypes(exclude=['object'])
-
-# correlation coefficient and coefficient of determination
-correlation_dff = dff.corr(method='pearson', )
-r2_dff = correlation_dff * correlation_dff
-features1 = dff.columns
-features = list(features1)
-
-x = dff.loc[:, features].values
-# Separating out the target (if any)
-y = dff.loc[:, ].values
-# Standardizing the features to {mean, variance} = {0, 1}
-x = StandardScaler().fit_transform(x)
-
-pca = PCA(n_components=len(features))
-principalComponents = pca.fit_transform(x)
-principalDf = pd.DataFrame(data=principalComponents
-                           , columns=['PC' + str(i + 1) for i in range(len(features))])
-# combining principle components and target
-finalDf = pd.concat([df[[df.columns[0]]], principalDf], axis=1)
-dfff = finalDf
-# explained variance of the the two principal components
-# print(pca.explained_variance_ratio_)
-# Explained variance tells us how much information (variance) can be attributed to each of the principal components
-
-# loading of each feature in principle components
-loading = pca.components_.T * np.sqrt(pca.explained_variance_)
-# or you can use
-# corr = pd.DataFrame(data=[[np.corrcoef(dff[c], principalComponents[:, n])[1, 0]
-#                            for n in range(pca.n_components_)] for c in dff],
-#                     columns=[0, 1],
-#                     index=dff.columns)
-loading_df = pd.DataFrame(data=loading[0:, 0:], index=features,
-                          columns=['PC' + str(i + 1) for i in range(loading.shape[1])])
-loading_dff = loading_df.T
-Var = pca.explained_variance_ratio_
-PC_df = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features))], columns=['Principal Component'])
-PC_num = [float(i + 1) for i in range(len(features))]
-Var_df = pd.DataFrame(data=Var, columns=['Cumulative Proportion of Explained Variance'])
-Var_cumsum = Var_df.cumsum()
-Var_dff = pd.concat([PC_df, (Var_cumsum * 100)], axis=1)
-PC_interp = np.interp(70, Var_dff['Cumulative Proportion of Explained Variance'], PC_num)
-PC_interp_int = math.ceil(PC_interp)
-eigenvalues = pca.explained_variance_
-Eigen_df = pd.DataFrame(data=eigenvalues, columns=['Eigenvalues'])
-Eigen_dff = pd.concat([PC_df, Eigen_df], axis=1)
-
-####################
-# OUTLIER DATA NO SCALE #
-####################
-z_scores = scipy.stats.zscore(dff)
-abs_z_scores = np.abs(z_scores)
-filtered_entries = (abs_z_scores < 3).all(axis=1)
-outlier_dff = dff[filtered_entries]
-features1_outlier = outlier_dff.columns
-features_outlier = list(features1_outlier)
-outlier_names1 = df[filtered_entries]
-outlier_names = outlier_names1.iloc[:, 0]
-
-# correlation coefficient and coefficient of determination
-correlation_dff_outlier = outlier_dff.corr(method='pearson', )
-r2_dff_outlier = correlation_dff_outlier * correlation_dff_outlier
-
-x_outlier = outlier_dff.loc[:, features_outlier].values
-# Separating out the target (if any)
-y_outlier = outlier_dff.loc[:, ].values
-# Standardizing the features
-x_outlier = StandardScaler().fit_transform(x_outlier)
-
-pca_outlier = PCA(n_components=len(features_outlier))
-principalComponents_outlier = pca_outlier.fit_transform(x_outlier)
-principalDf_outlier = pd.DataFrame(data=principalComponents_outlier
-                                   , columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
-# combining principle components and target
-finalDf_outlier = pd.concat([outlier_names, principalDf_outlier], axis=1)
-dfff_outlier = finalDf_outlier
-# calculating loading
-loading_outlier = pca_outlier.components_.T * np.sqrt(pca_outlier.explained_variance_)
-loading_df_outlier = pd.DataFrame(data=loading_outlier[0:, 0:], index=features_outlier,
-                                  columns=['PC' + str(i + 1) for i in range(loading_outlier.shape[1])])
-loading_dff_outlier = loading_df_outlier.T
-
-Var_outlier = pca_outlier.explained_variance_ratio_
-PC_df_outlier = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features_outlier))],
-                             columns=['Principal Component'])
-PC_num_outlier = [float(i + 1) for i in range(len(features_outlier))]
-Var_df_outlier = pd.DataFrame(data=Var_outlier, columns=['Cumulative Proportion of Explained Variance'])
-Var_cumsum_outlier = Var_df_outlier.cumsum()
-Var_dff_outlier = pd.concat([PC_df_outlier, (Var_cumsum_outlier * 100)], axis=1)
-PC_interp_outlier = np.interp(70, Var_dff_outlier['Cumulative Proportion of Explained Variance'], PC_num_outlier)
-PC_interp_int_outlier = math.ceil(PC_interp_outlier)
-eigenvalues_outlier = pca_outlier.explained_variance_
-Eigen_df_outlier = pd.DataFrame(data=eigenvalues_outlier, columns=['Eigenvalues'])
-Eigen_dff_outlier = pd.concat([PC_df_outlier, Eigen_df_outlier], axis=1)
 
 ####################
 # APP LAYOUT #
@@ -155,14 +61,49 @@ app.layout = html.Div([
     html.Div([
         html.Img(
             src='https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/UOC.png',
-            height='35', width='140', style={'display': 'inline-block', 'padding-left': '1%'}),
+            height='35', width='135', style={'display': 'inline-block', 'padding-left': '1%'}),
         html.Img(src='https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/A2ML-logo.png',
-                 height='55', width='125', style={'float': 'right', 'display': 'inline-block', 'padding-right': '2%'}),
+                 height='50', width='125', style={'float': 'right', 'display': 'inline-block', 'padding-right': '2%'}),
         html.H1("Principal Component Analysis Visualisation Tools",
-                style={'display': 'inline-block', 'padding-left': '15%', 'text-align': 'center', 'fontSize': 32,
-                       'color': 'white', }),
+                style={'display': 'inline-block', 'padding-left': '11%', 'text-align': 'center', 'fontSize': 36,
+                       'color': 'white', 'font-family': 'Georgia'}),
         html.H1("...", style={'fontColor': '#3c3c3c', 'fontSize': 6})
     ], style={'backgroundColor': '#3d0027'}),
+    html.Div([html.A('Refresh', href='/')], style={}),
+    html.Div([
+        html.H2("Upload Data", style={'fontSize': 24, 'font-family': 'Arial', 'color': '#3d0027'}, ),
+        html.H3("Upload .txt, .csv or .xls files to starting exploring data...", style={'fontSize': 16,
+                                                                                        'font-family': 'Arial'}),
+        dcc.Store(id='csv-data', storage_type='session', data=None),
+        html.Div([dcc.Upload(
+            id='data-table-upload',
+            children=html.Div([html.Button('Upload File')],
+                              style={'height': "60px", 'borderWidth': '1px',
+                                     'borderRadius': '5px',
+                                     'textAlign': 'center',
+
+                                     }),
+            multiple=False
+        ),
+            html.Div(id='output-data-upload'),
+            dbc.Modal(
+                [
+                    dbc.ModalHeader(
+                        "Upload Error!"),
+                    dbc.ModalBody(
+                        "Please upload a .txt, .csv or .xls file."),
+                    dbc.ModalFooter(
+                        dbc.Button("Close",
+                                   id="close-upload",
+                                   className="ml-auto")
+                    ),
+                ],
+                id="modal-upload",
+                is_open=False,
+                centered=True,
+                size="xl"
+            )
+        ]), ], style={'display': 'inline-block', 'padding-left': '1%', }),
     html.Div([dcc.Tabs([dcc.Tab(label='Scree Plot', style=tab_style, selected_style=tab_selected_style,
                                 children=[
                                     html.Div([dcc.Graph(id='PC-Eigen-plot')
@@ -180,12 +121,12 @@ app.layout = html.Div([
                                             value='No')
                                                      ])
                                          ], style={'display': 'inline-block',
-                                                   'width': '49%'}),
+                                                   'width': '49%', 'padding-left': '1%'}),
                                     html.Div([
                                         html.Label(["You should use attempt to use at least..."
 
                                                        , html.Div(id='var-output-container-filter')])
-                                    ], style={}
+                                    ], style={'padding-left': '1%'}
                                     ),
                                     html.Div([
                                         html.Label(["As a rule of thumb for the Scree Plot"
@@ -194,10 +135,10 @@ app.layout = html.Div([
                                                     "leveling off (the elbow), indicates the number of "
                                                     "components that "
                                                     "should be retained as significant."])
-                                    ]),
+                                    ], style={'padding-left': '1%'}),
                                     html.Div([
                                         html.Label(["Note: Data has been standardised (scaled)"])
-                                    ])
+                                    ], style={'padding-left': '1%'})
                                 ]),
                         dcc.Tab(label='Feature correlation', style=tab_style,
                                 selected_style=tab_selected_style,
@@ -219,7 +160,7 @@ app.layout = html.Div([
                                                                  value='No')
                                                              ])
                                                         ], style={'display': 'inline-block',
-                                                                  'width': '49%'}),
+                                                                  'width': '49%', 'padding-left': '1%'}),
                                                     html.Div([html.Label(["Select color scale:",
                                                                           dcc.RadioItems(
                                                                               id='colorscale',
@@ -229,7 +170,7 @@ app.layout = html.Div([
                                                                               value='Plasma'
                                                                           )]),
                                                               ], style={'display': 'inline-block',
-                                                                        'width': '49%', }),
+                                                                        'width': '49%', 'padding-left': '1%'}),
                                                     html.Div([
                                                         html.P("There are usually two ways multicollinearity, "
                                                                "which is when there are a number of variables "
@@ -247,11 +188,11 @@ app.layout = html.Div([
                                                             " such as Random Forest, correlation of features will not be a concern. For non-correlation robust algorithms such as Linear Regression, "
                                                             "all high correlation variables should be removed.")
 
-                                                    ], style={}
+                                                    ], style={'padding-left': '1%'}
                                                     ),
                                                     html.Div([
                                                         html.Label(["Note: Data has been standardised (scale)"])
-                                                    ])
+                                                    ], style={'padding-left': '1%'})
                                                     ])
                                           ]),
                         dcc.Tab(label='Plots', style=tab_style,
@@ -271,7 +212,7 @@ app.layout = html.Div([
                                                           'value': 'Custom'}],
                                                 value='All'
                                             )])
-                                    ]),
+                                    ], style={'padding-left': '1%'}),
                                     html.Div([
                                         html.P("For custom variables..."),
                                         html.P(
@@ -283,16 +224,15 @@ app.layout = html.Div([
                                                 dcc.Dropdown(id='feature-input',
                                                              multi=True,
                                                              )])
-                                    ], style={'padding': 10}),
+                                    ], style={'padding': 10, 'padding-left': '1%'}),
                                 ]), dcc.Tabs(id='sub-tabs1', style=tabs_styles,
                                              children=[
                                                  dcc.Tab(label='Biplot (Scores + loadings)', style=tab_style,
                                                          selected_style=tab_selected_style,
                                                          children=[
                                                              html.Div([dcc.Graph(id='biplot', figure=fig)
-                                                                       ], style={'height': '100%', 'width': '60%',
-                                                                                 'padding-left': '15%',
-                                                                                 'padding-right': '15%'},
+                                                                       ], style={'height': '100%', 'width': '75%',
+                                                                                 'padding-left': '20%'},
                                                                       ),
                                                              html.Div(
                                                                  [html.Label(
@@ -305,7 +245,7 @@ app.layout = html.Div([
                                                                           value='No')
                                                                       ])
                                                                  ], style={'display': 'inline-block',
-                                                                           'width': '49%'}),
+                                                                           'width': '49%', 'padding-left': '1%'}),
                                                              html.Div([
                                                                  html.Label([
                                                                      "Graph Update to show either loadings (Loading Plot) or "
@@ -319,14 +259,14 @@ app.layout = html.Div([
                                                                          value='Biplot')
                                                                  ])
                                                              ], style={'display': 'inline-block',
-                                                                       'width': '49%'}),
+                                                                       'width': '49%', 'padding-left': '1%'}),
                                                              html.Div([
                                                                  html.P(
                                                                      "Note that PCA is an unsupervised technique. It only "
                                                                      "looks at the input features and does not take "
                                                                      "into account the output or the target"
                                                                      " (response) variable.")
-                                                             ]),
+                                                             ], style={'padding-left': '1%'}),
                                                              html.Div([
                                                                  html.P("For custom variables..."),
                                                                  html.Label([
@@ -342,7 +282,7 @@ app.layout = html.Div([
                                                                                    'value': 'No'}],
                                                                          value='No'
                                                                      )])
-                                                             ], style={'width': '49%',
+                                                             ], style={'width': '49%', 'padding-left': '1%',
                                                                        'display': 'inline-block'}),
                                                              html.Div([
                                                                  html.Label([
@@ -350,7 +290,7 @@ app.layout = html.Div([
                                                                      dcc.Dropdown(
                                                                          id='color-scale-scores',
                                                                      )])
-                                                             ], style={'width': '49%',
+                                                             ], style={'width': '49%', 'padding-left': '1%',
                                                                        'display': 'inline-block'}),
                                                              html.Div([
                                                                  html.Label([
@@ -365,7 +305,7 @@ app.layout = html.Div([
                                                                                    'value': 'No'}],
                                                                          value='No'
                                                                      )])
-                                                             ], style={'width': '49%',
+                                                             ], style={'width': '49%', 'padding-left': '1%',
                                                                        'display': 'inline-block'}),
                                                              html.Div([
                                                                  html.Label([
@@ -373,7 +313,7 @@ app.layout = html.Div([
                                                                      dcc.Dropdown(
                                                                          id='size-scale-scores',
                                                                      )])
-                                                             ], style={'width': '49%',
+                                                             ], style={'width': '49%', 'padding-left': '1%',
                                                                        'display': 'inline-block'}),
                                                              html.Div([html.Label(["Size range:"
                                                                                       , html.Div(
@@ -399,7 +339,7 @@ app.layout = html.Div([
                                                                      "The plot contains the original date but in the rotated (PC) coordinate system"),
                                                                  html.P(
                                                                      "A biplot merges a score plot and loading plot together.")
-                                                             ], style={}
+                                                             ], style={'padding-left': '1%'}
                                                              ),
 
                                                          ]),
@@ -407,8 +347,8 @@ app.layout = html.Div([
                                                          selected_style=tab_selected_style,
                                                          children=[
                                                              html.Div([dcc.Graph(id='cos2-plot', figure=fig)
-                                                                       ], style={'width': '40%',
-                                                                                 'padding-left': '29%'},
+                                                                       ], style={'width': '65%',
+                                                                                 'padding-left': '25%'},
                                                                       ),
                                                              html.Div(
                                                                  [html.Label(["Remove outliers (if any) in analysis:",
@@ -420,14 +360,22 @@ app.layout = html.Div([
                                                                                   value='No')
                                                                               ])
                                                                   ], style={'display': 'inline-block',
+                                                                            'padding-left': '1%',
                                                                             'width': '49%'}),
+                                                             html.Div([
+                                                                 html.P("The squared cosine shows the importance of a "
+                                                                        "component for a given observation i.e. "
+                                                                        "measures "
+                                                                        " how much a variable is represented in a "
+                                                                        "component")
+                                                             ], style={'padding-left': '1%'}),
                                                          ]),
                                                  dcc.Tab(label='Contribution', style=tab_style,
                                                          selected_style=tab_selected_style,
                                                          children=[
                                                              html.Div([dcc.Graph(id='contrib-plot', figure=fig)
-                                                                       ], style={'width': '40%',
-                                                                                 'padding-left': '29%'},
+                                                                       ], style={'width': '65%',
+                                                                                 'padding-left': '25%'},
                                                                       ),
                                                              html.Div(
                                                                  [html.Label(["Remove outliers (if any) in analysis:",
@@ -437,9 +385,14 @@ app.layout = html.Div([
                                                                                       {'label': 'Yes', 'value': 'Yes'},
                                                                                       {'label': 'No', 'value': 'No'}],
                                                                                   value='No')
-                                                                              ])
+                                                                              ], style={'padding-left': '1%'})
                                                                   ], style={'display': 'inline-block',
                                                                             'width': '49%'}),
+                                                             html.Div([
+                                                                 html.P("The contribution plot contains the "
+                                                                        "contributions (in percentage) of the "
+                                                                        "variables to the principal components")
+                                                             ], style={'padding-left': '1%'}),
                                                          ])
 
                                              ])
@@ -450,14 +403,14 @@ app.layout = html.Div([
                                     html.Div([
                                         html.Label(
                                             ["Note: Input in 'Plots' tab will provide output of data tables and the"
-                                             " downloadable PCA data and data table data"])
-                                    ], style={'font-weight': 'bold'}),
+                                             " downloadable PCA data"])
+                                    ], style={'font-weight': 'bold', 'padding-left': '1%'}),
                                     html.Div([html.A(
                                         'Download PCA Data',
                                         id='download-link',
                                         href="",
                                         target="_blank"
-                                    )]),
+                                    )], style={'padding-left': '1%'}),
                                     html.Div([html.Label(["Remove outliers (if any) in analysis:",
                                                           dcc.RadioItems(id="eigenA-outlier",
                                                                          options=[{'label': 'Yes',
@@ -465,7 +418,8 @@ app.layout = html.Div([
                                                                                   {'label': 'No',
                                                                                    'value': 'No'}],
                                                                          value='No'
-                                                                         )])]),
+                                                                         )])], style={'padding-left': '1%',
+                                                                                      'display': 'inline-block', }),
                                     html.Div([
                                         html.Div([
                                             html.Label(["Correlation between Features"])
@@ -648,16 +602,122 @@ app.layout = html.Div([
               ])])
 
 
+# READ FILE
+def parse_contents(contents, filename):
+    content_type, content_string = contents.split(',')
+    decoded = base64.b64decode(content_string)
+    try:
+        if 'csv' in filename:
+            # Assume that the user uploaded a CSV file
+            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+        elif 'xls' in filename:
+            # Assume that the user uploaded an excel file
+            df = pd.read_excel(io.BytesIO(decoded))
+        elif 'txt' or 'tsv' in filename:
+            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+'
+                             )
+    except Exception as e:
+        print(e)
+        return html.Div([
+            'There was an error processing this file.'
+        ])
+    return df
+
+
+# SIZE MODAL CALLBACK UPLOAD FILE
+@app.callback(
+    [Output('modal-upload', 'is_open'),
+     Output('output-data-upload', 'children')],
+    [
+        Input('data-table-upload', 'contents'),
+        Input('close-upload', 'n_clicks')],
+    [State('data-table-upload', 'filename')])
+def update_output(contents, modal_close, filename):
+    ctx = dash.callback_context
+    user_clicked = ctx.triggered[0]['prop_id'].split('.')[0]
+    df = parse_contents(contents, filename)
+    if not user_clicked or user_clicked == 'close':
+        return dash.no_update, False
+
+    if contents is None:
+        return [], False
+
+    if not filename.endswith(('.xls', '.csv', '.txt')):
+        return [], True
+    return df
+
+
+@app.callback(Output('csv-data', 'data'),
+              [Input('data-table-upload', 'contents')],
+              [State('data-table-upload', 'filename')])
+def parse_uploaded_file(contents, filename):
+    if not filename:
+        return dash.no_update
+    df = parse_contents(contents, filename)
+    return df.to_json(date_format='iso', orient='split')
+
+
 @app.callback(Output('PC-Var-plot', 'figure'),
-              [
-                  Input('outlier-value', 'value'),
-              ]
+              [Input('outlier-value', 'value'),
+               Input('csv-data', 'data')],
               )
-def update_graph_stat(outlier):
+def update_graph_stat(outlier, data):
     traces = []
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if outlier == 'No':
+        features1 = dff.columns
+        features = list(features1)
+        x = dff.loc[:, features].values
+        # Separating out the target (if any)
+        # Standardizing the features to {mean, variance} = {0, 1}
+        x = StandardScaler().fit_transform(x)
+        pca = PCA(n_components=len(features))
+        principalComponents = pca.fit_transform(x)
+        principalDf = pd.DataFrame(data=principalComponents
+                                   , columns=['PC' + str(i + 1) for i in range(len(features))])
+        finalDf = pd.concat([df[[df.columns[0]]], principalDf], axis=1)
+        loading = pca.components_.T * np.sqrt(pca.explained_variance_)
+        loading_df = pd.DataFrame(data=loading[0:, 0:], index=features,
+                                  columns=['PC' + str(i + 1) for i in range(loading.shape[1])])
+        Var = pca.explained_variance_ratio_
+        PC_df = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features))], columns=['Principal Component'])
+        Var_df = pd.DataFrame(data=Var, columns=['Cumulative Proportion of Explained Variance'])
+        Var_cumsum = Var_df.cumsum()
+        Var_dff = pd.concat([PC_df, (Var_cumsum * 100)], axis=1)
         data = Var_dff
     elif outlier == 'Yes':
+        z_scores = scipy.stats.zscore(dff)
+        abs_z_scores = np.abs(z_scores)
+        filtered_entries = (abs_z_scores < 3).all(axis=1)
+        outlier_dff = dff[filtered_entries]
+        features1_outlier = outlier_dff.columns
+        features_outlier = list(features1_outlier)
+        outlier_names1 = df[filtered_entries]
+        outlier_names = outlier_names1.iloc[:, 0]
+
+        x_outlier = outlier_dff.loc[:, features_outlier].values
+        # Standardizing the features
+        x_outlier = StandardScaler().fit_transform(x_outlier)
+
+        pca_outlier = PCA(n_components=len(features_outlier))
+        principalComponents_outlier = pca_outlier.fit_transform(x_outlier)
+        principalDf_outlier = pd.DataFrame(data=principalComponents_outlier
+                                           , columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
+        # combining principle components and target
+        finalDf_outlier = pd.concat([outlier_names, principalDf_outlier], axis=1)
+        # calculating loading
+        loading_outlier = pca_outlier.components_.T * np.sqrt(pca_outlier.explained_variance_)
+        loading_df_outlier = pd.DataFrame(data=loading_outlier[0:, 0:], index=features_outlier,
+                                          columns=['PC' + str(i + 1) for i in range(loading_outlier.shape[1])])
+        Var_outlier = pca_outlier.explained_variance_ratio_
+        PC_df_outlier = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features_outlier))],
+                                     columns=['Principal Component'])
+        Var_df_outlier = pd.DataFrame(data=Var_outlier, columns=['Cumulative Proportion of Explained Variance'])
+        Var_cumsum_outlier = Var_df_outlier.cumsum()
+        Var_dff_outlier = pd.concat([PC_df_outlier, (Var_cumsum_outlier * 100)], axis=1)
         data = Var_dff_outlier
     traces.append(go.Scatter(x=data['Principal Component'], y=data['Cumulative Proportion of Explained Variance'],
                              mode='lines', line=dict(color='Red')))
@@ -667,35 +727,176 @@ def update_graph_stat(outlier):
                                 titlefont=dict(family='Georgia', size=16),
                                 xaxis={'title': 'Principal Component'}, yaxis={'title': 'Cumulative Explained Variance',
                                                                                'range': [0, 100]},
-                                hovermode='closest', font=dict(family="Georgia", size=14), template="simple_white")
+                                hovermode='closest', font=dict(family="Helvetica"), template="simple_white")
             }
 
 
 @app.callback(
     Output('var-output-container-filter', 'children'),
-    [Input('outlier-value', 'value'), ],
+    [Input('outlier-value', 'value'),
+     Input('csv-data', 'data')],
 )
-def update_output(outlier):
+def update_output(outlier, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if outlier == 'No':
+        features1 = dff.columns
+        features = list(features1)
+        x = dff.loc[:, features].values
+        # Separating out the target (if any)
+        # Standardizing the features to {mean, variance} = {0, 1}
+        x = StandardScaler().fit_transform(x)
+        pca = PCA(n_components=len(features))
+        principalComponents = pca.fit_transform(x)
+        principalDf = pd.DataFrame(data=principalComponents
+                                   , columns=['PC' + str(i + 1) for i in range(len(features))])
+        # combining principle components and target
+        finalDf = pd.concat([df[[df.columns[0]]], principalDf], axis=1)
+        dfff = finalDf
+        loading = pca.components_.T * np.sqrt(pca.explained_variance_)
+        loading_df = pd.DataFrame(data=loading[0:, 0:], index=features,
+                                  columns=['PC' + str(i + 1) for i in range(loading.shape[1])])
+        loading_dff = loading_df.T
+        Var = pca.explained_variance_ratio_
+        PC_df = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features))], columns=['Principal Component'])
+        PC_num = [float(i + 1) for i in range(len(features))]
+        Var_df = pd.DataFrame(data=Var, columns=['Cumulative Proportion of Explained Variance'])
+        Var_cumsum = Var_df.cumsum()
+        Var_dff = pd.concat([PC_df, (Var_cumsum * 100)], axis=1)
+        PC_interp = np.interp(70, Var_dff['Cumulative Proportion of Explained Variance'], PC_num)
+        PC_interp_int = math.ceil(PC_interp)
         return "'{}' principal components (≥70% of explained variance) to avoid losing too much of your " \
                "data. Note that there is no required threshold in order for PCA to be valid." \
                " ".format(PC_interp_int)
     elif outlier == 'Yes':
+        z_scores = scipy.stats.zscore(dff)
+        abs_z_scores = np.abs(z_scores)
+        filtered_entries = (abs_z_scores < 3).all(axis=1)
+        outlier_dff = dff[filtered_entries]
+        features1_outlier = outlier_dff.columns
+        features_outlier = list(features1_outlier)
+        outlier_names1 = df[filtered_entries]
+        outlier_names = outlier_names1.iloc[:, 0]
+
+        x_outlier = outlier_dff.loc[:, features_outlier].values
+        # Separating out the target (if any)
+        y_outlier = outlier_dff.loc[:, ].values
+        # Standardizing the features
+        x_outlier = StandardScaler().fit_transform(x_outlier)
+
+        pca_outlier = PCA(n_components=len(features_outlier))
+        principalComponents_outlier = pca_outlier.fit_transform(x_outlier)
+        principalDf_outlier = pd.DataFrame(data=principalComponents_outlier
+                                           , columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
+        # combining principle components and target
+        finalDf_outlier = pd.concat([outlier_names, principalDf_outlier], axis=1)
+        dfff_outlier = finalDf_outlier
+        # calculating loading
+        loading_outlier = pca_outlier.components_.T * np.sqrt(pca_outlier.explained_variance_)
+        loading_df_outlier = pd.DataFrame(data=loading_outlier[0:, 0:], index=features_outlier,
+                                          columns=['PC' + str(i + 1) for i in range(loading_outlier.shape[1])])
+        loading_dff_outlier = loading_df_outlier.T
+
+        Var_outlier = pca_outlier.explained_variance_ratio_
+        PC_df_outlier = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features_outlier))],
+                                     columns=['Principal Component'])
+        PC_num_outlier = [float(i + 1) for i in range(len(features_outlier))]
+        Var_df_outlier = pd.DataFrame(data=Var_outlier, columns=['Cumulative Proportion of Explained Variance'])
+        Var_cumsum_outlier = Var_df_outlier.cumsum()
+        Var_dff_outlier = pd.concat([PC_df_outlier, (Var_cumsum_outlier * 100)], axis=1)
+        PC_interp_outlier = np.interp(70, Var_dff_outlier['Cumulative Proportion of Explained Variance'],
+                                      PC_num_outlier)
+        PC_interp_int_outlier = math.ceil(PC_interp_outlier)
         return "'{}' principal components (≥70% of explained variance) to avoid losing too much of your " \
                "data. Note that there is no required threshold in order for PCA to be valid." \
                " ".format(PC_interp_int_outlier)
 
 
 @app.callback(Output('PC-Eigen-plot', 'figure'),
-              [
-                  Input('outlier-value', 'value'),
-              ]
+              [Input('outlier-value', 'value'),
+               Input('csv-data', 'data')]
               )
-def update_graph_stat(outlier):
+def update_graph_stat(outlier, data):
     traces = []
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if outlier == 'No':
+        features1 = dff.columns
+        features = list(features1)
+        x = dff.loc[:, features].values
+        # Separating out the target (if any)
+        y = dff.loc[:, ].values
+        # Standardizing the features to {mean, variance} = {0, 1}
+        x = StandardScaler().fit_transform(x)
+        pca = PCA(n_components=len(features))
+        principalComponents = pca.fit_transform(x)
+        principalDf = pd.DataFrame(data=principalComponents
+                                   , columns=['PC' + str(i + 1) for i in range(len(features))])
+        # combining principle components and target
+        finalDf = pd.concat([df[[df.columns[0]]], principalDf], axis=1)
+        dfff = finalDf
+        loading = pca.components_.T * np.sqrt(pca.explained_variance_)
+        loading_df = pd.DataFrame(data=loading[0:, 0:], index=features,
+                                  columns=['PC' + str(i + 1) for i in range(loading.shape[1])])
+        loading_dff = loading_df.T
+        Var = pca.explained_variance_ratio_
+        PC_df = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features))], columns=['Principal Component'])
+        PC_num = [float(i + 1) for i in range(len(features))]
+        Var_df = pd.DataFrame(data=Var, columns=['Cumulative Proportion of Explained Variance'])
+        Var_cumsum = Var_df.cumsum()
+        Var_dff = pd.concat([PC_df, (Var_cumsum * 100)], axis=1)
+        PC_interp = np.interp(70, Var_dff['Cumulative Proportion of Explained Variance'], PC_num)
+        PC_interp_int = math.ceil(PC_interp)
+        eigenvalues = pca.explained_variance_
+        Eigen_df = pd.DataFrame(data=eigenvalues, columns=['Eigenvalues'])
+        Eigen_dff = pd.concat([PC_df, Eigen_df], axis=1)
         data = Eigen_dff
     elif outlier == 'Yes':
+        z_scores = scipy.stats.zscore(dff)
+        abs_z_scores = np.abs(z_scores)
+        filtered_entries = (abs_z_scores < 3).all(axis=1)
+        outlier_dff = dff[filtered_entries]
+        features1_outlier = outlier_dff.columns
+        features_outlier = list(features1_outlier)
+        outlier_names1 = df[filtered_entries]
+        outlier_names = outlier_names1.iloc[:, 0]
+
+        x_outlier = outlier_dff.loc[:, features_outlier].values
+        # Separating out the target (if any)
+        y_outlier = outlier_dff.loc[:, ].values
+        # Standardizing the features
+        x_outlier = StandardScaler().fit_transform(x_outlier)
+
+        pca_outlier = PCA(n_components=len(features_outlier))
+        principalComponents_outlier = pca_outlier.fit_transform(x_outlier)
+        principalDf_outlier = pd.DataFrame(data=principalComponents_outlier
+                                           , columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
+        # combining principle components and target
+        finalDf_outlier = pd.concat([outlier_names, principalDf_outlier], axis=1)
+        dfff_outlier = finalDf_outlier
+        # calculating loading
+        loading_outlier = pca_outlier.components_.T * np.sqrt(pca_outlier.explained_variance_)
+        loading_df_outlier = pd.DataFrame(data=loading_outlier[0:, 0:], index=features_outlier,
+                                          columns=['PC' + str(i + 1) for i in range(loading_outlier.shape[1])])
+        loading_dff_outlier = loading_df_outlier.T
+
+        Var_outlier = pca_outlier.explained_variance_ratio_
+        PC_df_outlier = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features_outlier))],
+                                     columns=['Principal Component'])
+        PC_num_outlier = [float(i + 1) for i in range(len(features_outlier))]
+        Var_df_outlier = pd.DataFrame(data=Var_outlier, columns=['Cumulative Proportion of Explained Variance'])
+        Var_cumsum_outlier = Var_df_outlier.cumsum()
+        Var_dff_outlier = pd.concat([PC_df_outlier, (Var_cumsum_outlier * 100)], axis=1)
+        PC_interp_outlier = np.interp(70, Var_dff_outlier['Cumulative Proportion of Explained Variance'],
+                                      PC_num_outlier)
+        PC_interp_int_outlier = math.ceil(PC_interp_outlier)
+        eigenvalues_outlier = pca_outlier.explained_variance_
+        Eigen_df_outlier = pd.DataFrame(data=eigenvalues_outlier, columns=['Eigenvalues'])
+        Eigen_dff_outlier = pd.concat([PC_df_outlier, Eigen_df_outlier], axis=1)
         data = Eigen_dff_outlier
     traces.append(go.Scatter(x=data['Principal Component'], y=data['Eigenvalues'], mode='lines'))
     return {'data': traces,
@@ -710,17 +911,70 @@ def update_graph_stat(outlier):
 @app.callback(Output('PC-feature-heatmap', 'figure'),
               [
                   Input('PC-feature-outlier-value', 'value'),
-                  Input('colorscale', 'value')
-              ]
+                  Input('colorscale', 'value'),
+                  Input('csv-data', 'data')]
               )
-def update_graph_stat(outlier, colorscale):
+def update_graph_stat(outlier, colorscale, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     traces = []
+    # INCLUDING OUTLIERS
+    features1 = dff.columns
+    features = list(features1)
+    x = dff.loc[:, features].values
+    # Separating out the target (if any)
+    y = dff.loc[:, ].values
+    # Standardizing the features to {mean, variance} = {0, 1}
+    x = StandardScaler().fit_transform(x)
+    pca = PCA(n_components=len(features))
+    principalComponents = pca.fit_transform(x)
+    principalDf = pd.DataFrame(data=principalComponents
+                               , columns=['PC' + str(i + 1) for i in range(len(features))])
+    # combining principle components and target
+    finalDf = pd.concat([df[[df.columns[0]]], principalDf], axis=1)
+    dfff = finalDf
+    # explained variance of the the two principal components
+    # print(pca.explained_variance_ratio_)
+    # Explained variance tells us how much information (variance) can be attributed to each of the principal components
+    # loading of each feature in principle components
+    loading = pca.components_.T * np.sqrt(pca.explained_variance_)
+    loading_df = pd.DataFrame(data=loading[0:, 0:], index=features,
+                              columns=['PC' + str(i + 1) for i in range(loading.shape[1])])
+    loading_dff = loading_df.T
+    # OUTLIERS REMOVED
+    z_scores_hm = scipy.stats.zscore(dff)
+    abs_z_scores_hm = np.abs(z_scores_hm)
+    filtered_entries_hm = (abs_z_scores_hm < 3).all(axis=1)
+    outlier_dff_hm = dff[filtered_entries_hm]
+    features1_outlier_hm = outlier_dff_hm.columns
+    features_outlier2 = list(features1_outlier_hm)
+    outlier_names1_hm = df[filtered_entries_hm]
+    outlier_names_hm = outlier_names1_hm.iloc[:, 0]
+    x_outlier_hm = outlier_dff_hm.loc[:, features_outlier2].values
+    # Separating out the target (if any)
+    # Standardizing the features
+    x_outlier_hm = StandardScaler().fit_transform(x_outlier_hm)
+
+    pca_outlier_hm = PCA(n_components=len(features_outlier2))
+    principalComponents_outlier_hm = pca_outlier_hm.fit_transform(x_outlier_hm)
+    principalDf_outlier_hm = pd.DataFrame(data=principalComponents_outlier_hm
+                                          , columns=['PC' + str(i + 1) for i in range(len(features_outlier2))])
+    # combining principle components and target
+    finalDf_outlier_hm = pd.concat([outlier_names_hm, principalDf_outlier_hm], axis=1)
+    dfff_outlier_hm = finalDf_outlier_hm
+    # calculating loading
+    loading_outlier_hm = pca_outlier_hm.components_.T * np.sqrt(pca_outlier_hm.explained_variance_)
+    loading_df_outlier_hm = pd.DataFrame(data=loading_outlier_hm[0:, 0:], index=features_outlier2,
+                                         columns=['PC' + str(i + 1) for i in range(loading_outlier_hm.shape[1])])
+    loading_dff_outlier_hm = loading_df_outlier_hm.T
     if outlier == 'No':
         data = loading_dff
     elif outlier == 'Yes':
-        data = loading_dff_outlier
+        data = loading_dff_outlier_hm
     traces.append(go.Heatmap(
-        z=data, x=features_outlier, y=['PC' + str(i + 1) for i in range(loading_outlier.shape[1])],
+        z=data, x=features_outlier2, y=['PC' + str(i + 1) for i in range(loading_outlier_hm.shape[1])],
         colorscale="Viridis" if colorscale == 'Viridis' else "Plasma",
         # coord: represent the correlation between the various feature and the principal component itself
         colorbar={"title": "Loading"}))
@@ -736,17 +990,34 @@ def update_graph_stat(outlier, colorscale):
 @app.callback(Output('feature-heatmap', 'figure'),
               [
                   Input('PC-feature-outlier-value', 'value'),
-                  Input('colorscale', 'value')
-              ]
-              )
-def update_graph_stat(outlier, colorscale):
+                  Input('colorscale', 'value'),
+                  Input('csv-data', 'data')])
+def update_graph_stat(outlier, colorscale, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     traces = []
     if outlier == 'No':
+        features1 = dff.columns
+        features = list(features1)
+        # correlation coefficient and coefficient of determination
+        correlation_dff = dff.corr(method='pearson', )
+        r2_dff = correlation_dff * correlation_dff
         data = r2_dff
         feat = features
     elif outlier == 'Yes':
-        feat = features_outlier
+        z_scores = scipy.stats.zscore(dff)
+        abs_z_scores = np.abs(z_scores)
+        filtered_entries = (abs_z_scores < 3).all(axis=1)
+        outlier_dff = dff[filtered_entries]
+        features1_outlier = outlier_dff.columns
+        features_outlier = list(features1_outlier)
+        # correlation coefficient and coefficient of determination
+        correlation_dff_outlier = outlier_dff.corr(method='pearson', )
+        r2_dff_outlier = correlation_dff_outlier * correlation_dff_outlier
         data = r2_dff_outlier
+        feat = features_outlier
     traces.append(go.Heatmap(
         z=data, x=feat, y=feat, colorscale="Viridis" if colorscale == 'Viridis' else "Plasma",
         # coord: represent the correlation between the various feature and the principal component itself
@@ -761,8 +1032,13 @@ def update_graph_stat(outlier, colorscale):
 
 
 @app.callback(Output('feature-input', 'options'),
-              [Input('all-custom-choice', 'value')])
-def activate_input(all_custom):
+              [Input('all-custom-choice', 'value'),
+               Input('csv-data', 'data')])
+def activate_input(all_custom, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == 'All':
         options = []
     elif all_custom == 'Custom':
@@ -774,8 +1050,13 @@ def activate_input(all_custom):
               [Input('feature-input', 'value'),
                Input('radio-target-item', 'value'),
                Input('outlier-value-biplot', 'value'),
-               Input('customvar-graph-update', 'value')])
-def populate_color_dropdown(input, target, outlier, graph_type):
+               Input('customvar-graph-update', 'value'),
+               Input('csv-data', 'data')],)
+def populate_color_dropdown(input, target, outlier, graph_type, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     dff_target = dff[input]
     z_scores_target = scipy.stats.zscore(dff_target)
     abs_z_scores_target = np.abs(z_scores_target)
@@ -794,8 +1075,13 @@ def populate_color_dropdown(input, target, outlier, graph_type):
               [Input('feature-input', 'value'),
                Input('radio-target-item-second', 'value'),
                Input('outlier-value-biplot', 'value'),
-               Input('customvar-graph-update', 'value')])
-def populate_color_dropdown(input, target, outlier, graph_type):
+               Input('customvar-graph-update', 'value'),
+               Input('csv-data', 'data')])
+def populate_color_dropdown(input, target, outlier, graph_type, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     dff_target = dff[input]
     z_scores_target = scipy.stats.zscore(dff_target)
     abs_z_scores_target = np.abs(z_scores_target)
@@ -819,10 +1105,15 @@ def populate_color_dropdown(input, target, outlier, graph_type):
                   Input('radio-target-item', 'value'),
                   Input('size-scale-scores', 'value'),
                   Input('radio-target-item-second', 'value'),
-                  Input('all-custom-choice', 'value')
+                  Input('all-custom-choice', 'value'),
+                  Input('csv-data', 'data')
               ]
               )
-def update_graph_custom(outlier, input, graph_update, color, target, size, target2, all_custom):
+def update_graph_custom(outlier, input, graph_update, color, target, size, target2, all_custom, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     features1 = dff.columns
     features = list(features1)
     if all_custom == 'All':
@@ -905,6 +1196,12 @@ def update_graph_custom(outlier, input, graph_update, color, target, size, targe
             dat = dfff_outlier_scale
         trace2_all = go.Scatter(x=dat['PC1'], y=dat['PC2'], mode='markers',
                                 text=dat[dat.columns[0]],
+                                hovertemplate=
+                                '<b>%{text}</b>' +
+                                '<br>PC1: %{x}<br>' +
+                                'PC2: %{y}'
+                                "<extra></extra>",
+
                                 marker=dict(opacity=0.7, showscale=False, size=12,
                                             line=dict(width=0.5, color='DarkSlateGrey'),
                                             ),
@@ -1054,6 +1351,11 @@ def update_graph_custom(outlier, input, graph_update, color, target, size, targe
                             marker_color=dat[color] if target == 'Yes' else None,
                             marker_size=dat[size] if target2 == 'Yes' else 12,
                             text=dat[dat.columns[0]],
+                            hovertemplate=
+                            '<b>%{text}</b>' +
+                            '<br>PC1: %{x}<br>' +
+                            'PC2: %{y}'
+                            "<extra></extra>",
                             marker=dict(opacity=0.7, colorscale='Plasma',
                                         sizeref=max(dat[size]) / (15 ** 2) if target2 == 'Yes' else None,
                                         sizemode='area',
@@ -1109,10 +1411,15 @@ def update_graph_custom(outlier, input, graph_update, color, target, size, targe
 @app.callback(
     Output('size-second-target-container', 'children'),
     [Input('size-scale-scores', 'value'),
-     Input('outlier-value-biplot', 'value')
+     Input('outlier-value-biplot', 'value'),
+     Input('csv-data', 'data')
      ]
 )
-def update_output(size, outlier):
+def update_output(size, outlier, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     z_scores_dff_size = scipy.stats.zscore(dff)
     abs_z_scores_dff_size = np.abs(z_scores_dff_size)
     filtered_entries_dff_size = (abs_z_scores_dff_size < 3).all(axis=1)
@@ -1128,9 +1435,14 @@ def update_output(size, outlier):
               [
                   Input('outlier-value-cos2', 'value'),
                   Input('feature-input', 'value'),
-                  Input('all-custom-choice', 'value')
+                  Input('all-custom-choice', 'value'),
+                  Input('csv-data', 'data')
               ])
-def update_cos2_plot(outlier, input, all_custom):
+def update_cos2_plot(outlier, input, all_custom, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == 'All':
         # x_scale = MinMaxScaler(feature_range=(0, 1), copy=True).fit_transform(x_scale)
         features1 = dff.columns
@@ -1234,6 +1546,7 @@ def update_cos2_plot(outlier, input, all_custom):
                                     textposition='bottom right', textfont=dict(size=12)
                                     )
             trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers',
+                                    hoverinfo='skip',
                                     marker=dict(showscale=True, opacity=0,
                                                 color=[data["cos2"].min(), data["cos2"].max()],
                                                 colorscale=colorscale,
@@ -1375,7 +1688,7 @@ def update_cos2_plot(outlier, input, all_custom):
             trace1 = go.Scatter(x=dataf['PC1'], y=dataf['PC2'], name=i, line=dict(color=colorscale[counter_color]),
                                 mode='lines+text', textposition='bottom right', textfont=dict(size=12),
                                 )
-            trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers',
+            trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers', hoverinfo='skip',
                                     marker=dict(showscale=True, color=[data["cos2"].min(), data["cos2"].max()],
                                                 colorscale=colorscale, opacity=0,
                                                 colorbar=dict(title=dict(text="Cos2",
@@ -1404,9 +1717,14 @@ def update_cos2_plot(outlier, input, all_custom):
               [
                   Input('outlier-value-contrib', 'value'),
                   Input('feature-input', 'value'),
-                  Input('all-custom-choice', 'value')
+                  Input('all-custom-choice', 'value'),
+                  Input('csv-data', 'data')
               ])
-def update_cos2_plot(outlier, input, all_custom):
+def update_cos2_plot(outlier, input, all_custom, data):
+    if not data:
+        return dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == 'All':
         features1 = dff.columns
         features = list(features1)
@@ -1510,7 +1828,7 @@ def update_cos2_plot(outlier, input, all_custom):
                                     name=i, line=dict(color=colorscale[counter_color]),
                                     textposition='bottom right', textfont=dict(size=12)
                                     )
-            trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers',
+            trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers', hoverinfo='skip',
                                     marker=dict(showscale=True, opacity=0,
                                                 color=[data["contrib"].min(), data["contrib"].max()],
                                                 colorscale=colorscale,
@@ -1661,7 +1979,7 @@ def update_cos2_plot(outlier, input, all_custom):
             trace1 = go.Scatter(x=dataf['PC1'], y=dataf['PC2'], name=i, line=dict(color=colorscale[counter_color]),
                                 mode='lines+text', textposition='bottom right', textfont=dict(size=12),
                                 )
-            trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers',
+            trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers', hoverinfo='skip',
                                     marker=dict(showscale=True, color=[data["contrib"].min(), data["contrib"].max()],
                                                 colorscale=colorscale, opacity=0,
                                                 colorbar=dict(title=dict(text="Contribution",
@@ -1704,8 +2022,13 @@ def update_filename(all_custom, outlier):
 @app.callback(Output('download-link', 'href'),
               [Input('all-custom-choice', 'value'),
                Input('feature-input', 'value'),
-               Input('eigenA-outlier', 'value')])
-def update_link(all_custom, input, outlier):
+               Input('eigenA-outlier', 'value'),
+               Input('csv-data', 'data')])
+def update_link(all_custom, input, outlier, data):
+    if not data:
+        return dash.no_update, dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     features1 = dff.columns
     features = list(features1)
     if all_custom == 'All':
@@ -1813,17 +2136,32 @@ def update_filename(outlier):
 @app.callback([Output('data-table-correlation', 'data'),
                Output('data-table-correlation', 'columns'),
                Output('download-link-correlation', 'href')],
-              [Input("eigenA-outlier", 'value')], )
-def update_output(outlier):
+              [Input("eigenA-outlier", 'value'),
+               Input('csv-data', 'data')], )
+def update_output(outlier, data):
+    if not data:
+        return dash.no_update, dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if outlier == 'No':
         features1 = dff.columns
         features = list(features1)
+        # correlation coefficient and coefficient of determination
+        correlation_dff = dff.corr(method='pearson', )
         r2_dff_table = correlation_dff * correlation_dff
         r2_dff_table.insert(0, 'Features', features)
         data_frame = r2_dff_table
     if outlier == 'Yes':
+        z_scores = scipy.stats.zscore(dff)
+        abs_z_scores = np.abs(z_scores)
+        filtered_entries = (abs_z_scores < 3).all(axis=1)
+        outlier_dff = dff[filtered_entries]
         features1_outlier = outlier_dff.columns
         features_outlier = list(features1_outlier)
+        outlier_names1 = df[filtered_entries]
+        outlier_names = outlier_names1.iloc[:, 0]
+        # correlation coefficient and coefficient of determination
+        correlation_dff_outlier = outlier_dff.corr(method='pearson', )
         r2_dff_outlier_table = correlation_dff_outlier * correlation_dff_outlier
         r2_dff_outlier_table.insert(0, 'Features', features_outlier)
         data_frame = r2_dff_outlier_table
@@ -1852,10 +2190,46 @@ def update_filename(outlier):
                Output('download-link-eigenA', 'href')],
               [Input('all-custom-choice', 'value'),
                Input("eigenA-outlier", 'value'),
-               Input('feature-input', 'value')], )
-def update_output(all_custom, outlier, input):
+               Input('feature-input', 'value'),
+               Input('csv-data', 'data')], )
+def update_output(all_custom, outlier, input, data):
+    if not data:
+        return dash.no_update, dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == 'All':
         if outlier == 'No':
+            features1 = dff.columns
+            features = list(features1)
+            x = dff.loc[:, features].values
+            # Separating out the target (if any)
+            # Standardizing the features to {mean, variance} = {0, 1}
+            x = StandardScaler().fit_transform(x)
+
+            pca = PCA(n_components=len(features))
+            principalComponents = pca.fit_transform(x)
+            principalDf = pd.DataFrame(data=principalComponents
+                                       , columns=['PC' + str(i + 1) for i in range(len(features))])
+            # combining principle components and target
+            finalDf = pd.concat([df[[df.columns[0]]], principalDf], axis=1)
+            dfff = finalDf
+            loading = pca.components_.T * np.sqrt(pca.explained_variance_)
+
+            loading_df = pd.DataFrame(data=loading[0:, 0:], index=features,
+                                      columns=['PC' + str(i + 1) for i in range(loading.shape[1])])
+            loading_dff = loading_df.T
+            Var = pca.explained_variance_ratio_
+            PC_df = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features))],
+                                 columns=['Principal Component'])
+            PC_num = [float(i + 1) for i in range(len(features))]
+            Var_df = pd.DataFrame(data=Var, columns=['Cumulative Proportion of Explained Variance'])
+            Var_cumsum = Var_df.cumsum()
+            Var_dff = pd.concat([PC_df, (Var_cumsum * 100)], axis=1)
+            PC_interp = np.interp(70, Var_dff['Cumulative Proportion of Explained Variance'], PC_num)
+            PC_interp_int = math.ceil(PC_interp)
+            eigenvalues = pca.explained_variance_
+            Eigen_df = pd.DataFrame(data=eigenvalues, columns=['Eigenvalues'])
+            Eigen_dff = pd.concat([PC_df, Eigen_df], axis=1)
             Var_dfff = pd.concat([(Var_cumsum * 100)], axis=1)
             Eigen_Analysis = pd.concat([PC_df.T, Eigen_df.T, Var_df.T, Var_dfff.T], axis=0)
             Eigen_Analysis = Eigen_Analysis.rename(columns=Eigen_Analysis.iloc[0])
@@ -1865,6 +2239,51 @@ def update_output(all_custom, outlier, input):
                                          "Cumulative Proportion of Explained Variance (%)"])
             data_frame_EigenA = Eigen_Analysis
         if outlier == 'Yes':
+            z_scores = scipy.stats.zscore(dff)
+            abs_z_scores = np.abs(z_scores)
+            filtered_entries = (abs_z_scores < 3).all(axis=1)
+            outlier_dff = dff[filtered_entries]
+            features1_outlier = outlier_dff.columns
+            features_outlier = list(features1_outlier)
+            outlier_names1 = df[filtered_entries]
+            outlier_names = outlier_names1.iloc[:, 0]
+
+            # correlation coefficient and coefficient of determination
+            correlation_dff_outlier = outlier_dff.corr(method='pearson', )
+            r2_dff_outlier = correlation_dff_outlier * correlation_dff_outlier
+
+            x_outlier = outlier_dff.loc[:, features_outlier].values
+            # Separating out the target (if any)
+            y_outlier = outlier_dff.loc[:, ].values
+            # Standardizing the features
+            x_outlier = StandardScaler().fit_transform(x_outlier)
+
+            pca_outlier = PCA(n_components=len(features_outlier))
+            principalComponents_outlier = pca_outlier.fit_transform(x_outlier)
+            principalDf_outlier = pd.DataFrame(data=principalComponents_outlier
+                                               , columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
+            # combining principle components and target
+            finalDf_outlier = pd.concat([outlier_names, principalDf_outlier], axis=1)
+            dfff_outlier = finalDf_outlier
+            # calculating loading
+            loading_outlier = pca_outlier.components_.T * np.sqrt(pca_outlier.explained_variance_)
+            loading_df_outlier = pd.DataFrame(data=loading_outlier[0:, 0:], index=features_outlier,
+                                              columns=['PC' + str(i + 1) for i in range(loading_outlier.shape[1])])
+            loading_dff_outlier = loading_df_outlier.T
+
+            Var_outlier = pca_outlier.explained_variance_ratio_
+            PC_df_outlier = pd.DataFrame(data=['PC' + str(i + 1) for i in range(len(features_outlier))],
+                                         columns=['Principal Component'])
+            PC_num_outlier = [float(i + 1) for i in range(len(features_outlier))]
+            Var_df_outlier = pd.DataFrame(data=Var_outlier, columns=['Cumulative Proportion of Explained Variance'])
+            Var_cumsum_outlier = Var_df_outlier.cumsum()
+            Var_dff_outlier = pd.concat([PC_df_outlier, (Var_cumsum_outlier * 100)], axis=1)
+            PC_interp_outlier = np.interp(70, Var_dff_outlier['Cumulative Proportion of Explained Variance'],
+                                          PC_num_outlier)
+            PC_interp_int_outlier = math.ceil(PC_interp_outlier)
+            eigenvalues_outlier = pca_outlier.explained_variance_
+            Eigen_df_outlier = pd.DataFrame(data=eigenvalues_outlier, columns=['Eigenvalues'])
+            Eigen_dff_outlier = pd.concat([PC_df_outlier, Eigen_df_outlier], axis=1)
             Var_dfff_outlier = pd.concat([Var_cumsum_outlier * 100], axis=1)
             Eigen_Analysis_Outlier = pd.concat(
                 [PC_df_outlier.T, Eigen_df_outlier.T, Var_df_outlier.T, Var_dfff_outlier.T],
@@ -1986,10 +2405,17 @@ def update_filename(outlier):
                Output('download-link-loadings', 'href')],
               [Input('all-custom-choice', 'value'),
                Input("eigenA-outlier", 'value'),
-               Input('feature-input', 'value')], )
-def update_output(all_custom, outlier, input):
+               Input('feature-input', 'value'),
+               Input('csv-data', 'data')], )
+def update_output(all_custom, outlier, input, data):
+    if not data:
+        return dash.no_update, dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == 'All':
         if outlier == 'No':
+            features1 = dff.columns
+            features = list(features1)
             # ORIGINAL DATA WITH OUTLIERS
             x_scale = dff.loc[:, features].values
             y_scale = dff.loc[:, ].values
@@ -2123,8 +2549,13 @@ def update_filename(outlier):
                Output('download-link-cos2', 'href'), ],
               [Input('all-custom-choice', 'value'),
                Input("eigenA-outlier", 'value'),
-               Input('feature-input', 'value')], )
-def update_output(all_custom, outlier, input):
+               Input('feature-input', 'value'),
+               Input('csv-data', 'data')], )
+def update_output(all_custom, outlier, input, data):
+    if not data:
+        return dash.no_update, dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == "All":
         if outlier == 'No':
             features1 = dff.columns
@@ -2277,8 +2708,13 @@ def update_filename(outlier):
                Output('download-link-contrib', 'href')],
               [Input('all-custom-choice', 'value'),
                Input("eigenA-outlier", 'value'),
-               Input('feature-input', 'value')], )
-def update_output(all_custom, outlier, input):
+               Input('feature-input', 'value'),
+               Input('csv-data', 'data')], )
+def update_output(all_custom, outlier, input, data):
+    if not data:
+        return dash.no_update, dash.no_update
+    df = pd.read_json(data, orient='split')
+    dff = df.select_dtypes(exclude=['object'])
     if all_custom == "All":
         if outlier == 'No':
             features1 = dff.columns
@@ -2426,5 +2862,3 @@ if __name__ == '__main__':
     app.run_server(debug=False)
 
 # OUTPUT: YOU SHOULD USE AT LEAST X PRINCIPAL COMPONENTS (≥85% of explained variance)
-
-

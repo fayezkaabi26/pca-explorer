@@ -51,7 +51,6 @@ tab_selected_style = {
     'padding': '6px'
 }
 
-
 ####################
 # APP LAYOUT #
 ####################
@@ -323,7 +322,7 @@ app.layout = html.Div([
                                                                                  'padding-right': '5%'}
                                                                       ),
                                                              html.Div([
-                                                                 html.P(),
+                                                                 html.Br(),
                                                                  html.P(
                                                                      "A loading plot shows how "
                                                                      "strongly each characteristic (variable)"
@@ -1051,7 +1050,7 @@ def activate_input(all_custom, data):
                Input('radio-target-item', 'value'),
                Input('outlier-value-biplot', 'value'),
                Input('customvar-graph-update', 'value'),
-               Input('csv-data', 'data')],)
+               Input('csv-data', 'data')], )
 def populate_color_dropdown(input, target, outlier, graph_type, data):
     if not data:
         return dash.no_update

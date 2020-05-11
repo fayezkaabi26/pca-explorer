@@ -1,5 +1,7 @@
 import base64
 import io
+import textwrap
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -50,6 +52,48 @@ tab_selected_style = {
     'fontWeight': 'bold',
     'padding': '6px'
 }
+
+# APP ABOUT DESCRIPTION
+MOF_tool_about = textwrap.wrap(' These tools aim to provide a reproducible and consistent data visualisation platform '
+                               'where experimental and computational researchers can use big data and statistical '
+                               'analysis to find the best materials for specific applications. Principal Component '
+                               'Analysis (PCA) is a dimension reduction technique that can be used to reduce a large '
+                               'set of observable variables to a smaller set of latent variables that still contain '
+                               'most of the information in the large set (feature extraction). This is done by '
+                               'transforming a number of (possibly) correlated variables into a number of orthogonal '
+                               '(uncorrelated) variables called principal components to find the directions of maximal '
+                               'variance. PCA can be used to ease data visualisation by having fewer dimensions to plot '
+                               'or be used as a pre-processing step before using another Machine Learning (ML)'
+                               ' algorithm for regression '
+                               'and classification tasks. PCA can be used to improve an ML algorithm performance, '
+                               'reduce overfitting and reduce noise in data.',
+                               width=50)
+Scree_plot_about = textwrap.wrap(' The Principal Component Analysis Visualisation Tools runs PCA for the user and '
+                                 'populates a Scree plot. This plot allows the user to determine if PCA is suitable '
+                                 'for '
+                                 'their dataset and if they are able to compromise an X% drop in explained variance to '
+                                 'have fewer dimensions.', width=50)
+Feature_correlation_filter = textwrap.wrap("Feature correlation heatmaps provides users with a feature analysis and "
+                                           "feature principal component analysis. This tool will allow users to see the"
+                                           " correlation between variables and the"
+                                           " covariances/correlations between original variables and the "
+                                           "principal components (loadings)."
+                                           , width=50)
+plots_analysis = textwrap.wrap('Users can keep all variables as features or drop certain variables to produce a '
+                               'Biplot, cos2 plot and contribution plot. The score plot be used to look for clusters, '
+                               'trends, and outliers in the first two principal components. The loading plot is used to'
+                               'visually interpret the first two principal components. The biplot overlays the score '
+                               'plot and the loading plot on the same graph. The squared cosine (cos2) plot shows '
+                               'the importance of a component for a given observation i.e. measures '
+                               'how much a variable is represented in a component. The contribution plot contains the '
+                               'contributions (%) of the variables to the principal components', width=50, )
+data_table_download = textwrap.wrap("The users inputs from the 'Plots' tab will provide the output of the data tables."
+                                    " The user can download the scores, eigenvalues, explained variance, "
+                                    "cumulative explained variance, loadings, "
+                                    "cos2 and contributions from the populated datatables.", width=50)
+MOF_GH = textwrap.wrap(" to explore AAML's sample data and read more on"
+                       " AAML's Principal Component Analysis Visualisation Tool Manual, FAQ's & Troubleshooting"
+                       " on GitHub... ", width=50)
 
 ####################
 # APP LAYOUT #
@@ -103,502 +147,545 @@ app.layout = html.Div([
                 size="xl"
             )
         ]), ], style={'display': 'inline-block', 'padding-left': '1%', }),
-    html.Div([dcc.Tabs([dcc.Tab(label='Scree Plot', style=tab_style, selected_style=tab_selected_style,
-                                children=[
-                                    html.Div([dcc.Graph(id='PC-Eigen-plot')
-                                              ],
-                                             style={'display': 'inline-block',
-                                                    'width': '49%'}),
-                                    html.Div([dcc.Graph(id='PC-Var-plot')
-                                              ], style={'display': 'inline-block', 'float': 'right',
-                                                        'width': '49%'}),
-                                    html.Div(
-                                        [html.Label(["Remove outliers (if any) in analysis:", dcc.RadioItems(
-                                            id='outlier-value',
-                                            options=[{'label': 'Yes', 'value': 'Yes'},
-                                                     {'label': 'No', 'value': 'No'}],
-                                            value='No')
-                                                     ])
-                                         ], style={'display': 'inline-block',
-                                                   'width': '49%', 'padding-left': '1%'}),
-                                    html.Div([
-                                        html.Label(["You should use attempt to use at least..."
+    html.Div([dcc.Tabs([
+        dcc.Tab(label='About', style=tab_style, selected_style=tab_selected_style,
+                children=[html.Div([html.H2(" What are AAML's Principal Component Analysis Visualisation Tools?",
+                                            style={'fontSize': 18, 'font-family': 'Arial', 'font-weight': 'bold'
+                                                   }),
+                                    html.Div([' '.join(MOF_tool_about)]
+                                             , style={'font-family': 'Arial'}),
+                                    html.H2(["Scree Plot"],
+                                            style={'fontSize': 18,
+                                                   'font-family': 'Arial', 'font-weight': 'bold'}),
+                                    html.Div([' '.join(Scree_plot_about)], style={'font-family': 'Arial'}),
+                                    html.H2(["Feature Correlation"], style={'fontSize': 18,
+                                                                            'font-weight': 'bold',
+                                                                            'font-family': 'Arial'}),
+                                    html.Div([' '.join(Feature_correlation_filter)], style={'font-family': 'Arial', }),
+                                    html.H2(["Plots"],
+                                            style={'fontSize': 18, 'font-weight': 'bold',
+                                                   'font-family': 'Arial'}),
+                                    html.Div([' '.join(plots_analysis)], style={'font-family': 'Arial'}),
+                                    html.H2(["Data tables"],
+                                            style={'fontSize': 18, 'font-weight': 'bold',
+                                                   'font-family': 'Arial'}),
+                                    html.Div([' '.join(data_table_download)], style={'font-family': 'Arial'}),
 
-                                                       , html.Div(id='var-output-container-filter')])
+                                    # ADD LINK
+                                    html.Div([html.Plaintext(
+                                        [' Click ', html.A('here ',
+                                                           href='https://github.com/aaml-analytics/pca-explorer')],
+                                        style={'display': 'inline-block',
+                                               'fontSize': 14, 'font-family': 'Arial'}),
+                                        html.Div([' '.join(MOF_GH)], style={'display': 'inline-block',
+                                                                            'fontSize': 14,
+                                                                            'font-family': 'Arial'}),
+                                        html.Img(
+                                            src='https://raw.githubusercontent.com/aaml-analytics/mof'
+                                                '-explorer/master/github.png',
+                                            height='40', width='40',
+                                            style={'display': 'inline-block', 'float': "right"
+                                                   })
+                                    ]
+                                        , style={'display': 'inline-block'})
+                                    ], style={'backgroundColor': '#ffffff', 'padding-left':'1%'}
+                                   )]),
+        dcc.Tab(label='Scree Plot', style=tab_style, selected_style=tab_selected_style,
+                children=[
+                    html.Div([dcc.Graph(id='PC-Eigen-plot')
+                              ],
+                             style={'display': 'inline-block',
+                                    'width': '49%'}),
+                    html.Div([dcc.Graph(id='PC-Var-plot')
+                              ], style={'display': 'inline-block', 'float': 'right',
+                                        'width': '49%'}),
+                    html.Div(
+                        [html.Label(["Remove outliers (if any) in analysis:", dcc.RadioItems(
+                            id='outlier-value',
+                            options=[{'label': 'Yes', 'value': 'Yes'},
+                                     {'label': 'No', 'value': 'No'}],
+                            value='No')
+                                     ])
+                         ], style={'display': 'inline-block',
+                                   'width': '49%', 'padding-left': '1%'}),
+                    html.Div([
+                        html.Label(["You should use attempt to use at least..."
+
+                                       , html.Div(id='var-output-container-filter')])
+                    ], style={'padding-left': '1%'}
+                    ),
+                    html.Div([
+                        html.Label(["As a rule of thumb for the Scree Plot"
+                                    " Eigenvalues, the point where the slope of the curve "
+                                    "is clearly "
+                                    "leveling off (the elbow), indicates the number of "
+                                    "components that "
+                                    "should be retained as significant."])
+                    ], style={'padding-left': '1%'}),
+                    html.Div([
+                        html.Label(["Note: Data has been standardised (scaled)"])
+                    ], style={'padding-left': '1%'})
+                ]),
+        dcc.Tab(label='Feature correlation', style=tab_style,
+                selected_style=tab_selected_style,
+                children=[html.Div([html.Div([dcc.Graph(id='PC-feature-heatmap')
+                                              ], style={'width': '44%',
+                                                        'display': 'inline-block',
+                                                        'float': 'right'}),
+                                    html.Div([dcc.Graph(id='feature-heatmap')
+                                              ], style={'width': '54%',
+                                                        'display': 'inline-block',
+                                                        'float': 'left'}),
+                                    html.Div(
+                                        [html.Label(
+                                            ["Remove outliers (if any) in analysis:",
+                                             dcc.RadioItems(
+                                                 id='PC-feature-outlier-value',
+                                                 options=[{'label': 'Yes', 'value': 'Yes'},
+                                                          {'label': 'No', 'value': 'No'}],
+                                                 value='No')
+                                             ])
+                                        ], style={'display': 'inline-block',
+                                                  'width': '49%', 'padding-left': '1%'}),
+                                    html.Div([html.Label(["Select color scale:",
+                                                          dcc.RadioItems(
+                                                              id='colorscale',
+                                                              options=[{'label': i, 'value': i}
+                                                                       for i in
+                                                                       ['Viridis', 'Plasma']],
+                                                              value='Plasma'
+                                                          )]),
+                                              ], style={'display': 'inline-block',
+                                                        'width': '49%', 'padding-left': '1%'}),
+                                    html.Div([
+                                        html.P("There are usually two ways multicollinearity, "
+                                               "which is when there are a number of variables "
+                                               "that are highly correlated, is dealt with "
+                                               "before analysis:"),
+                                        html.P("1) Use PCA to obtain a set of orthogonal ("
+                                               "not correlated) variables to analyse."),
+                                        html.P("2) Use correlation of determination (R²) to "
+                                               "determine which variables are highly "
+                                               "correlated and use only 1 in analysis. "
+                                               "Cut off for highly correlated variables "
+                                               "is ~0.7."),
+                                        html.P(
+                                            "In any case, it depends on the machine learning algorithm you may apply later. For correlation robust algorithms,"
+                                            " such as Random Forest, correlation of features will not be a concern. For non-correlation robust algorithms such as Linear Regression, "
+                                            "all high correlation variables should be removed.")
+
                                     ], style={'padding-left': '1%'}
                                     ),
                                     html.Div([
-                                        html.Label(["As a rule of thumb for the Scree Plot"
-                                                    " Eigenvalues, the point where the slope of the curve "
-                                                    "is clearly "
-                                                    "leveling off (the elbow), indicates the number of "
-                                                    "components that "
-                                                    "should be retained as significant."])
-                                    ], style={'padding-left': '1%'}),
-                                    html.Div([
-                                        html.Label(["Note: Data has been standardised (scaled)"])
+                                        html.Label(["Note: Data has been standardised (scale)"])
                                     ], style={'padding-left': '1%'})
-                                ]),
-                        dcc.Tab(label='Feature correlation', style=tab_style,
-                                selected_style=tab_selected_style,
-                                children=[html.Div([html.Div([dcc.Graph(id='PC-feature-heatmap')
-                                                              ], style={'width': '44%',
-                                                                        'display': 'inline-block',
-                                                                        'float': 'right'}),
-                                                    html.Div([dcc.Graph(id='feature-heatmap')
-                                                              ], style={'width': '54%',
-                                                                        'display': 'inline-block',
-                                                                        'float': 'left'}),
-                                                    html.Div(
-                                                        [html.Label(
-                                                            ["Remove outliers (if any) in analysis:",
-                                                             dcc.RadioItems(
-                                                                 id='PC-feature-outlier-value',
-                                                                 options=[{'label': 'Yes', 'value': 'Yes'},
-                                                                          {'label': 'No', 'value': 'No'}],
-                                                                 value='No')
-                                                             ])
-                                                        ], style={'display': 'inline-block',
-                                                                  'width': '49%', 'padding-left': '1%'}),
-                                                    html.Div([html.Label(["Select color scale:",
-                                                                          dcc.RadioItems(
-                                                                              id='colorscale',
-                                                                              options=[{'label': i, 'value': i}
-                                                                                       for i in
-                                                                                       ['Viridis', 'Plasma']],
-                                                                              value='Plasma'
-                                                                          )]),
-                                                              ], style={'display': 'inline-block',
-                                                                        'width': '49%', 'padding-left': '1%'}),
-                                                    html.Div([
-                                                        html.P("There are usually two ways multicollinearity, "
-                                                               "which is when there are a number of variables "
-                                                               "that are highly correlated, is dealt with "
-                                                               "before analysis:"),
-                                                        html.P("1) Use PCA to obtain a set of orthogonal ("
-                                                               "not correlated) variables to analyse."),
-                                                        html.P("2) Use correlation of determination (R²) to "
-                                                               "determine which variables are highly "
-                                                               "correlated and use only 1 in analysis. "
-                                                               "Cut off for highly correlated variables "
-                                                               "is ~0.7."),
-                                                        html.P(
-                                                            "In any case, it depends on the machine learning algorithm you may apply later. For correlation robust algorithms,"
-                                                            " such as Random Forest, correlation of features will not be a concern. For non-correlation robust algorithms such as Linear Regression, "
-                                                            "all high correlation variables should be removed.")
+                                    ])
+                          ]),
+        dcc.Tab(label='Plots', style=tab_style,
+                selected_style=tab_selected_style,
+                children=[html.Div([
 
-                                                    ], style={'padding-left': '1%'}
-                                                    ),
-                                                    html.Div([
-                                                        html.Label(["Note: Data has been standardised (scale)"])
-                                                    ], style={'padding-left': '1%'})
-                                                    ])
-                                          ]),
-                        dcc.Tab(label='Plots', style=tab_style,
-                                selected_style=tab_selected_style,
-                                children=[html.Div([
+                    html.Div([
+                        html.P("Input here affects all plots, datatables and downloadable data output"),
+                        html.Label([
+                            "Would you like to analyse all variables or choose custom variables to "
+                            "analyse:",
+                            dcc.RadioItems(
+                                id='all-custom-choice',
+                                options=[{'label': 'All',
+                                          'value': 'All'},
+                                         {'label': 'Custom',
+                                          'value': 'Custom'}],
+                                value='All'
+                            )])
+                    ], style={'padding-left': '1%'}),
+                    html.Div([
+                        html.P("For custom variables..."),
+                        html.P(
+                            " Input variables you would not like as features in your PCA:"),
+                        html.Label(
+                            [
+                                "Note: Only input numerical variables (non-numerical variables have already "
+                                "been removed from your dataframe)",
+                                dcc.Dropdown(id='feature-input',
+                                             multi=True,
+                                             )])
+                    ], style={'padding': 10, 'padding-left': '1%'}),
+                ]), dcc.Tabs(id='sub-tabs1', style=tabs_styles,
+                             children=[
+                                 dcc.Tab(label='Biplot (Scores + loadings)', style=tab_style,
+                                         selected_style=tab_selected_style,
+                                         children=[
+                                             html.Div([dcc.Graph(id='biplot', figure=fig)
+                                                       ], style={'height': '100%', 'width': '75%',
+                                                                 'padding-left': '20%'},
+                                                      ),
+                                             html.Div(
+                                                 [html.Label(
+                                                     ["Remove outliers (if any) in analysis:",
+                                                      dcc.RadioItems(
+                                                          id='outlier-value-biplot',
+                                                          options=[
+                                                              {'label': 'Yes', 'value': 'Yes'},
+                                                              {'label': 'No', 'value': 'No'}],
+                                                          value='No')
+                                                      ])
+                                                 ], style={'display': 'inline-block',
+                                                           'width': '49%', 'padding-left': '1%'}),
+                                             html.Div([
+                                                 html.Label([
+                                                     "Graph Update to show either loadings (Loading Plot) or "
+                                                     "scores and loadings (Biplot):",
+                                                     dcc.RadioItems(
+                                                         id='customvar-graph-update',
+                                                         options=[{'label': 'Biplot',
+                                                                   'value': 'Biplot'},
+                                                                  {'label': 'Loadings',
+                                                                   'value': 'Loadings'}],
+                                                         value='Biplot')
+                                                 ])
+                                             ], style={'display': 'inline-block',
+                                                       'width': '49%', 'padding-left': '1%'}),
+                                             html.Div([
+                                                 html.P(
+                                                     "Note that PCA is an unsupervised technique. It only "
+                                                     "looks at the input features and does not take "
+                                                     "into account the output or the target"
+                                                     " (response) variable.")
+                                             ], style={'padding-left': '1%'}),
+                                             html.Div([
+                                                 html.P("For custom variables..."),
+                                                 html.Label([
+                                                     "Would you like to introduce a first target variable"
+                                                     " into your data visualisation?"
+                                                     " (Graph type must be Biplot): "
+                                                     "",
+                                                     dcc.RadioItems(
+                                                         id='radio-target-item',
+                                                         options=[{'label': 'Yes',
+                                                                   'value': 'Yes'},
+                                                                  {'label': 'No',
+                                                                   'value': 'No'}],
+                                                         value='No'
+                                                     )])
+                                             ], style={'width': '49%', 'padding-left': '1%',
+                                                       'display': 'inline-block'}),
+                                             html.Div([
+                                                 html.Label([
+                                                     "Select first target variable for color scale of scores: ",
+                                                     dcc.Dropdown(
+                                                         id='color-scale-scores',
+                                                     )])
+                                             ], style={'width': '49%', 'padding-left': '1%',
+                                                       'display': 'inline-block'}),
+                                             html.Div([
+                                                 html.Label([
+                                                     "Would you like to introduce a second target variable"
+                                                     " into your data visualisation??"
+                                                     " (Graph type must be Biplot):",
+                                                     dcc.RadioItems(
+                                                         id='radio-target-item-second',
+                                                         options=[{'label': 'Yes',
+                                                                   'value': 'Yes'},
+                                                                  {'label': 'No',
+                                                                   'value': 'No'}],
+                                                         value='No'
+                                                     )])
+                                             ], style={'width': '49%', 'padding-left': '1%',
+                                                       'display': 'inline-block'}),
+                                             html.Div([
+                                                 html.Label([
+                                                     "Select second target variable for size scale of scores:",
+                                                     dcc.Dropdown(
+                                                         id='size-scale-scores',
+                                                     )])
+                                             ], style={'width': '49%', 'padding-left': '1%',
+                                                       'display': 'inline-block'}),
+                                             html.Div([html.Label(["Size range:"
+                                                                      , html.Div(
+                                                     id='size-second-target-container')])
+                                                       ], style={'display': 'inline-block',
+                                                                 'float': 'right',
+                                                                 'padding-right': '5%'}
+                                                      ),
+                                             html.Div([
+                                                 html.Br(),
+                                                 html.P(
+                                                     "A loading plot shows how "
+                                                     "strongly each characteristic (variable)"
+                                                     " influences a principal component. The angles between the vectors"
+                                                     " tell us how characteristics correlate with one another... "),
+                                                 html.P(
+                                                     "1) When two vectors are close, forming a small angle, the two "
+                                                     "variables they represent are positively correlated. "
+                                                     "2) If they meet each other at 90°, they are not likely to be correlated. "
+                                                     "3) When they diverge and form a large angle (close to 180°), they are negative correlated."),
+                                                 html.P(
+                                                     "The Score Plot involves the projection of the data onto the PCs in two dimensions."
+                                                     "The plot contains the original date but in the rotated (PC) coordinate system"),
+                                                 html.P(
+                                                     "A biplot merges a score plot and loading plot together.")
+                                             ], style={'padding-left': '1%'}
+                                             ),
 
-                                    html.Div([
-                                        html.P("Input here affects all plots, datatables and downloadable data output"),
-                                        html.Label([
-                                            "Would you like to analyse all variables or choose custom variables to "
-                                            "analyse:",
-                                            dcc.RadioItems(
-                                                id='all-custom-choice',
-                                                options=[{'label': 'All',
-                                                          'value': 'All'},
-                                                         {'label': 'Custom',
-                                                          'value': 'Custom'}],
-                                                value='All'
-                                            )])
-                                    ], style={'padding-left': '1%'}),
-                                    html.Div([
-                                        html.P("For custom variables..."),
-                                        html.P(
-                                            " Input variables you would not like as features in your PCA:"),
-                                        html.Label(
-                                            [
-                                                "Note: Only input numerical variables (non-numerical variables have already "
-                                                "been removed from your dataframe)",
-                                                dcc.Dropdown(id='feature-input',
-                                                             multi=True,
-                                                             )])
-                                    ], style={'padding': 10, 'padding-left': '1%'}),
-                                ]), dcc.Tabs(id='sub-tabs1', style=tabs_styles,
-                                             children=[
-                                                 dcc.Tab(label='Biplot (Scores + loadings)', style=tab_style,
-                                                         selected_style=tab_selected_style,
-                                                         children=[
-                                                             html.Div([dcc.Graph(id='biplot', figure=fig)
-                                                                       ], style={'height': '100%', 'width': '75%',
-                                                                                 'padding-left': '20%'},
-                                                                      ),
-                                                             html.Div(
-                                                                 [html.Label(
-                                                                     ["Remove outliers (if any) in analysis:",
-                                                                      dcc.RadioItems(
-                                                                          id='outlier-value-biplot',
-                                                                          options=[
-                                                                              {'label': 'Yes', 'value': 'Yes'},
-                                                                              {'label': 'No', 'value': 'No'}],
-                                                                          value='No')
-                                                                      ])
-                                                                 ], style={'display': 'inline-block',
-                                                                           'width': '49%', 'padding-left': '1%'}),
-                                                             html.Div([
-                                                                 html.Label([
-                                                                     "Graph Update to show either loadings (Loading Plot) or "
-                                                                     "scores and loadings (Biplot):",
-                                                                     dcc.RadioItems(
-                                                                         id='customvar-graph-update',
-                                                                         options=[{'label': 'Biplot',
-                                                                                   'value': 'Biplot'},
-                                                                                  {'label': 'Loadings',
-                                                                                   'value': 'Loadings'}],
-                                                                         value='Biplot')
-                                                                 ])
-                                                             ], style={'display': 'inline-block',
-                                                                       'width': '49%', 'padding-left': '1%'}),
-                                                             html.Div([
-                                                                 html.P(
-                                                                     "Note that PCA is an unsupervised technique. It only "
-                                                                     "looks at the input features and does not take "
-                                                                     "into account the output or the target"
-                                                                     " (response) variable.")
-                                                             ], style={'padding-left': '1%'}),
-                                                             html.Div([
-                                                                 html.P("For custom variables..."),
-                                                                 html.Label([
-                                                                     "Would you like to introduce a first target variable"
-                                                                     " into your data visualisation?"
-                                                                     " (Graph type must be Biplot): "
-                                                                     "",
-                                                                     dcc.RadioItems(
-                                                                         id='radio-target-item',
-                                                                         options=[{'label': 'Yes',
-                                                                                   'value': 'Yes'},
-                                                                                  {'label': 'No',
-                                                                                   'value': 'No'}],
-                                                                         value='No'
-                                                                     )])
-                                                             ], style={'width': '49%', 'padding-left': '1%',
-                                                                       'display': 'inline-block'}),
-                                                             html.Div([
-                                                                 html.Label([
-                                                                     "Select first target variable for color scale of scores: ",
-                                                                     dcc.Dropdown(
-                                                                         id='color-scale-scores',
-                                                                     )])
-                                                             ], style={'width': '49%', 'padding-left': '1%',
-                                                                       'display': 'inline-block'}),
-                                                             html.Div([
-                                                                 html.Label([
-                                                                     "Would you like to introduce a second target variable"
-                                                                     " into your data visualisation??"
-                                                                     " (Graph type must be Biplot):",
-                                                                     dcc.RadioItems(
-                                                                         id='radio-target-item-second',
-                                                                         options=[{'label': 'Yes',
-                                                                                   'value': 'Yes'},
-                                                                                  {'label': 'No',
-                                                                                   'value': 'No'}],
-                                                                         value='No'
-                                                                     )])
-                                                             ], style={'width': '49%', 'padding-left': '1%',
-                                                                       'display': 'inline-block'}),
-                                                             html.Div([
-                                                                 html.Label([
-                                                                     "Select second target variable for size scale of scores:",
-                                                                     dcc.Dropdown(
-                                                                         id='size-scale-scores',
-                                                                     )])
-                                                             ], style={'width': '49%', 'padding-left': '1%',
-                                                                       'display': 'inline-block'}),
-                                                             html.Div([html.Label(["Size range:"
-                                                                                      , html.Div(
-                                                                     id='size-second-target-container')])
-                                                                       ], style={'display': 'inline-block',
-                                                                                 'float': 'right',
-                                                                                 'padding-right': '5%'}
-                                                                      ),
-                                                             html.Div([
-                                                                 html.Br(),
-                                                                 html.P(
-                                                                     "A loading plot shows how "
-                                                                     "strongly each characteristic (variable)"
-                                                                     " influences a principal component. The angles between the vectors"
-                                                                     " tell us how characteristics correlate with one another... "),
-                                                                 html.P(
-                                                                     "1) When two vectors are close, forming a small angle, the two "
-                                                                     "variables they represent are positively correlated. "
-                                                                     "2) If they meet each other at 90°, they are not likely to be correlated. "
-                                                                     "3) When they diverge and form a large angle (close to 180°), they are negative correlated."),
-                                                                 html.P(
-                                                                     "The Score Plot involves the projection of the data onto the PCs in two dimensions."
-                                                                     "The plot contains the original date but in the rotated (PC) coordinate system"),
-                                                                 html.P(
-                                                                     "A biplot merges a score plot and loading plot together.")
-                                                             ], style={'padding-left': '1%'}
-                                                             ),
+                                         ]),
+                                 dcc.Tab(label='Cos2', style=tab_style,
+                                         selected_style=tab_selected_style,
+                                         children=[
+                                             html.Div([dcc.Graph(id='cos2-plot', figure=fig)
+                                                       ], style={'width': '65%',
+                                                                 'padding-left': '25%'},
+                                                      ),
+                                             html.Div(
+                                                 [html.Label(["Remove outliers (if any) in analysis:",
+                                                              dcc.RadioItems(
+                                                                  id='outlier-value-cos2',
+                                                                  options=[
+                                                                      {'label': 'Yes', 'value': 'Yes'},
+                                                                      {'label': 'No', 'value': 'No'}],
+                                                                  value='No')
+                                                              ])
+                                                  ], style={'display': 'inline-block',
+                                                            'padding-left': '1%',
+                                                            'width': '49%'}),
+                                             html.Div([
+                                                 html.P("The squared cosine shows the importance of a "
+                                                        "component for a given observation i.e. "
+                                                        "measures "
+                                                        " how much a variable is represented in a "
+                                                        "component")
+                                             ], style={'padding-left': '1%'}),
+                                         ]),
+                                 dcc.Tab(label='Contribution', style=tab_style,
+                                         selected_style=tab_selected_style,
+                                         children=[
+                                             html.Div([dcc.Graph(id='contrib-plot', figure=fig)
+                                                       ], style={'width': '65%',
+                                                                 'padding-left': '25%'},
+                                                      ),
+                                             html.Div(
+                                                 [html.Label(["Remove outliers (if any) in analysis:",
+                                                              dcc.RadioItems(
+                                                                  id='outlier-value-contrib',
+                                                                  options=[
+                                                                      {'label': 'Yes', 'value': 'Yes'},
+                                                                      {'label': 'No', 'value': 'No'}],
+                                                                  value='No')
+                                                              ], style={'padding-left': '1%'})
+                                                  ], style={'display': 'inline-block',
+                                                            'width': '49%'}),
+                                             html.Div([
+                                                 html.P("The contribution plot contains the "
+                                                        "contributions (in percentage) of the "
+                                                        "variables to the principal components")
+                                             ], style={'padding-left': '1%'}),
+                                         ])
 
-                                                         ]),
-                                                 dcc.Tab(label='Cos2', style=tab_style,
-                                                         selected_style=tab_selected_style,
-                                                         children=[
-                                                             html.Div([dcc.Graph(id='cos2-plot', figure=fig)
-                                                                       ], style={'width': '65%',
-                                                                                 'padding-left': '25%'},
-                                                                      ),
-                                                             html.Div(
-                                                                 [html.Label(["Remove outliers (if any) in analysis:",
-                                                                              dcc.RadioItems(
-                                                                                  id='outlier-value-cos2',
-                                                                                  options=[
-                                                                                      {'label': 'Yes', 'value': 'Yes'},
-                                                                                      {'label': 'No', 'value': 'No'}],
-                                                                                  value='No')
-                                                                              ])
-                                                                  ], style={'display': 'inline-block',
-                                                                            'padding-left': '1%',
-                                                                            'width': '49%'}),
-                                                             html.Div([
-                                                                 html.P("The squared cosine shows the importance of a "
-                                                                        "component for a given observation i.e. "
-                                                                        "measures "
-                                                                        " how much a variable is represented in a "
-                                                                        "component")
-                                                             ], style={'padding-left': '1%'}),
-                                                         ]),
-                                                 dcc.Tab(label='Contribution', style=tab_style,
-                                                         selected_style=tab_selected_style,
-                                                         children=[
-                                                             html.Div([dcc.Graph(id='contrib-plot', figure=fig)
-                                                                       ], style={'width': '65%',
-                                                                                 'padding-left': '25%'},
-                                                                      ),
-                                                             html.Div(
-                                                                 [html.Label(["Remove outliers (if any) in analysis:",
-                                                                              dcc.RadioItems(
-                                                                                  id='outlier-value-contrib',
-                                                                                  options=[
-                                                                                      {'label': 'Yes', 'value': 'Yes'},
-                                                                                      {'label': 'No', 'value': 'No'}],
-                                                                                  value='No')
-                                                                              ], style={'padding-left': '1%'})
-                                                                  ], style={'display': 'inline-block',
-                                                                            'width': '49%'}),
-                                                             html.Div([
-                                                                 html.P("The contribution plot contains the "
-                                                                        "contributions (in percentage) of the "
-                                                                        "variables to the principal components")
-                                                             ], style={'padding-left': '1%'}),
-                                                         ])
+                             ])
+                ]),
+        dcc.Tab(label='Data tables', style=tab_style,
+                selected_style=tab_selected_style,
+                children=[html.Div([
+                    html.Div([
+                        html.Label(
+                            ["Note: Input in 'Plots' tab will provide output of data tables and the"
+                             " downloadable PCA data"])
+                    ], style={'font-weight': 'bold', 'padding-left': '1%'}),
+                    html.Div([html.A(
+                        'Download PCA Data',
+                        id='download-link',
+                        href="",
+                        target="_blank"
+                    )], style={'padding-left': '1%'}),
+                    html.Div([html.Label(["Remove outliers (if any) in analysis:",
+                                          dcc.RadioItems(id="eigenA-outlier",
+                                                         options=[{'label': 'Yes',
+                                                                   'value': 'Yes'},
+                                                                  {'label': 'No',
+                                                                   'value': 'No'}],
+                                                         value='No'
+                                                         )])], style={'padding-left': '1%',
+                                                                      'display': 'inline-block', }),
+                    html.Div([
+                        html.Div([
+                            html.Label(["Correlation between Features"])
+                        ], style={'font-weight': 'bold'}),
+                        html.Div([
+                            dash_table.DataTable(id='data-table-correlation',
+                                                 editable=False,
+                                                 filter_action='native',
+                                                 sort_action='native',
+                                                 sort_mode='multi',
+                                                 selected_columns=[],
+                                                 selected_rows=[],
+                                                 page_action='native',
+                                                 column_selectable='single',
+                                                 page_current=0,
+                                                 page_size=20,
+                                                 style_data={'height': 'auto'},
+                                                 style_table={'overflowX': 'scroll',
+                                                              'maxHeight': '300px',
+                                                              'overflowY': 'scroll'},
+                                                 style_cell={
+                                                     'minWidth': '0px', 'maxWidth': '220px',
+                                                     'whiteSpace': 'normal',
+                                                 }
+                                                 ),
+                            html.Div(id='data-table-correlation-container'),
+                        ]),
+                        html.Div([html.A(
+                            'Download Feature Correlation data',
+                            id='download-link-correlation',
+                            href="",
+                            target="_blank"
+                        )]),
 
-                                             ])
-                                ]),
-                        dcc.Tab(label='Data tables', style=tab_style,
-                                selected_style=tab_selected_style,
-                                children=[html.Div([
-                                    html.Div([
-                                        html.Label(
-                                            ["Note: Input in 'Plots' tab will provide output of data tables and the"
-                                             " downloadable PCA data"])
-                                    ], style={'font-weight': 'bold', 'padding-left': '1%'}),
-                                    html.Div([html.A(
-                                        'Download PCA Data',
-                                        id='download-link',
-                                        href="",
-                                        target="_blank"
-                                    )], style={'padding-left': '1%'}),
-                                    html.Div([html.Label(["Remove outliers (if any) in analysis:",
-                                                          dcc.RadioItems(id="eigenA-outlier",
-                                                                         options=[{'label': 'Yes',
-                                                                                   'value': 'Yes'},
-                                                                                  {'label': 'No',
-                                                                                   'value': 'No'}],
-                                                                         value='No'
-                                                                         )])], style={'padding-left': '1%',
-                                                                                      'display': 'inline-block', }),
-                                    html.Div([
-                                        html.Div([
-                                            html.Label(["Correlation between Features"])
-                                        ], style={'font-weight': 'bold'}),
-                                        html.Div([
-                                            dash_table.DataTable(id='data-table-correlation',
-                                                                 editable=False,
-                                                                 filter_action='native',
-                                                                 sort_action='native',
-                                                                 sort_mode='multi',
-                                                                 selected_columns=[],
-                                                                 selected_rows=[],
-                                                                 page_action='native',
-                                                                 column_selectable='single',
-                                                                 page_current=0,
-                                                                 page_size=20,
-                                                                 style_data={'height': 'auto'},
-                                                                 style_table={'overflowX': 'scroll',
-                                                                              'maxHeight': '300px',
-                                                                              'overflowY': 'scroll'},
-                                                                 style_cell={
-                                                                     'minWidth': '0px', 'maxWidth': '220px',
-                                                                     'whiteSpace': 'normal',
-                                                                 }
-                                                                 ),
-                                            html.Div(id='data-table-correlation-container'),
-                                        ]),
-                                        html.Div([html.A(
-                                            'Download Feature Correlation data',
-                                            id='download-link-correlation',
-                                            href="",
-                                            target="_blank"
-                                        )]),
+                    ], style={'padding': 20}),
 
-                                    ], style={'padding': 20}),
+                    html.Div([
+                        html.Div([
+                            html.Label(["Eigen Analysis of the correlation matrix"]),
+                        ], style={'font-weight': 'bold'}),
+                        html.Div([
+                            dash_table.DataTable(id='data-table-eigenA',
+                                                 editable=False,
+                                                 filter_action='native',
+                                                 sort_action='native',
+                                                 sort_mode='multi',
+                                                 selected_columns=[],
+                                                 selected_rows=[],
+                                                 page_action='native',
+                                                 column_selectable='single',
+                                                 page_current=0,
+                                                 page_size=20,
+                                                 style_data={'height': 'auto'},
+                                                 style_table={'overflowX': 'scroll',
+                                                              'maxHeight': '300px',
+                                                              'overflowY': 'scroll'},
+                                                 style_cell={
+                                                     'minWidth': '0px', 'maxWidth': '220px',
+                                                     'whiteSpace': 'normal',
+                                                 }
+                                                 ),
+                            html.Div(id='data-table-eigenA-container'),
 
-                                    html.Div([
-                                        html.Div([
-                                            html.Label(["Eigen Analysis of the correlation matrix"]),
-                                        ], style={'font-weight': 'bold'}),
-                                        html.Div([
-                                            dash_table.DataTable(id='data-table-eigenA',
-                                                                 editable=False,
-                                                                 filter_action='native',
-                                                                 sort_action='native',
-                                                                 sort_mode='multi',
-                                                                 selected_columns=[],
-                                                                 selected_rows=[],
-                                                                 page_action='native',
-                                                                 column_selectable='single',
-                                                                 page_current=0,
-                                                                 page_size=20,
-                                                                 style_data={'height': 'auto'},
-                                                                 style_table={'overflowX': 'scroll',
-                                                                              'maxHeight': '300px',
-                                                                              'overflowY': 'scroll'},
-                                                                 style_cell={
-                                                                     'minWidth': '0px', 'maxWidth': '220px',
-                                                                     'whiteSpace': 'normal',
-                                                                 }
-                                                                 ),
-                                            html.Div(id='data-table-eigenA-container'),
-
-                                        ]),
-                                        html.Div([html.A(
-                                            'Download Eigen Analysis data',
-                                            id='download-link-eigenA',
-                                            href="",
-                                            download='Eigen_Analysis_data.csv',
-                                            target="_blank"
-                                        )]),
-                                    ], style={'padding': 20}),
-                                    html.Div([
-                                        html.Div([
-                                            html.Label(["Loadings (Feature and PC correlation) from PCA"]),
-                                        ], style={'font-weight': 'bold'}),
-                                        html.Div([
-                                            dash_table.DataTable(id='data-table-loadings',
-                                                                 editable=False,
-                                                                 filter_action='native',
-                                                                 sort_action='native',
-                                                                 sort_mode='multi',
-                                                                 selected_columns=[],
-                                                                 selected_rows=[],
-                                                                 page_action='native',
-                                                                 column_selectable='single',
-                                                                 page_current=0,
-                                                                 page_size=20,
-                                                                 style_data={'height': 'auto'},
-                                                                 style_table={'overflowX': 'scroll',
-                                                                              'maxHeight': '300px',
-                                                                              'overflowY': 'scroll'},
-                                                                 style_cell={
-                                                                     'minWidth': '0px', 'maxWidth': '220px',
-                                                                     'whiteSpace': 'normal',
-                                                                 }
-                                                                 ),
-                                            html.Div(id='data-table-loadings-container'),
-                                        ]),
-                                        html.Div([html.A(
-                                            'Download Loadings data',
-                                            id='download-link-loadings',
-                                            download='Loadings_data.csv',
-                                            href="",
-                                            target="_blank"
-                                        )]),
-                                    ], style={'padding': 20}),
-                                    html.Div([
-                                        html.Div([
-                                            html.Label(["Cos2 from PCA"])
-                                        ], style={'font-weight': 'bold'}),
-                                        html.Div([
-                                            dash_table.DataTable(id='data-table-cos2',
-                                                                 editable=False,
-                                                                 filter_action='native',
-                                                                 sort_action='native',
-                                                                 sort_mode='multi',
-                                                                 selected_columns=[],
-                                                                 selected_rows=[],
-                                                                 page_action='native',
-                                                                 column_selectable='single',
-                                                                 page_current=0,
-                                                                 page_size=20,
-                                                                 style_data={'height': 'auto'},
-                                                                 style_table={'overflowX': 'scroll',
-                                                                              'maxHeight': '300px',
-                                                                              'overflowY': 'scroll'},
-                                                                 style_cell={
-                                                                     'minWidth': '0px', 'maxWidth': '220px',
-                                                                     'whiteSpace': 'normal',
-                                                                 }
-                                                                 ),
-                                            html.Div(id='data-table-cos2-container'),
-                                        ]),
-                                        html.Div([html.A(
-                                            'Download Cos2 data',
-                                            id='download-link-cos2',
-                                            download='Cos2_data.csv',
-                                            href="",
-                                            target="_blank"
-                                        )]),
-                                    ], style={'padding': 20}),
-                                    html.Div([
-                                        html.Div([
-                                            html.Label(["Contributions from PCA"])
-                                        ], style={'font-weight': 'bold'}),
-                                        html.Div([
-                                            dash_table.DataTable(id='data-table-contrib',
-                                                                 editable=False,
-                                                                 filter_action='native',
-                                                                 sort_action='native',
-                                                                 sort_mode='multi',
-                                                                 selected_columns=[],
-                                                                 selected_rows=[],
-                                                                 page_action='native',
-                                                                 column_selectable='single',
-                                                                 page_current=0,
-                                                                 page_size=20,
-                                                                 style_data={'height': 'auto'},
-                                                                 style_table={'overflowX': 'scroll',
-                                                                              'maxHeight': '300px',
-                                                                              'overflowY': 'scroll'},
-                                                                 style_cell={
-                                                                     'minWidth': '0px', 'maxWidth': '220px',
-                                                                     'whiteSpace': 'normal',
-                                                                 }
-                                                                 ),
-                                            html.Div(id='data-table-contrib-container'),
-                                        ]),
-                                        html.Div([html.A(
-                                            'Download Contributions data',
-                                            id='download-link-contrib',
-                                            download='Contributions_data.csv',
-                                            href="",
-                                            target="_blank"
-                                        )]),
-                                    ], style={'padding': 20}),
-                                ])])
-                        ])
-              ])])
+                        ]),
+                        html.Div([html.A(
+                            'Download Eigen Analysis data',
+                            id='download-link-eigenA',
+                            href="",
+                            download='Eigen_Analysis_data.csv',
+                            target="_blank"
+                        )]),
+                    ], style={'padding': 20}),
+                    html.Div([
+                        html.Div([
+                            html.Label(["Loadings (Feature and PC correlation) from PCA"]),
+                        ], style={'font-weight': 'bold'}),
+                        html.Div([
+                            dash_table.DataTable(id='data-table-loadings',
+                                                 editable=False,
+                                                 filter_action='native',
+                                                 sort_action='native',
+                                                 sort_mode='multi',
+                                                 selected_columns=[],
+                                                 selected_rows=[],
+                                                 page_action='native',
+                                                 column_selectable='single',
+                                                 page_current=0,
+                                                 page_size=20,
+                                                 style_data={'height': 'auto'},
+                                                 style_table={'overflowX': 'scroll',
+                                                              'maxHeight': '300px',
+                                                              'overflowY': 'scroll'},
+                                                 style_cell={
+                                                     'minWidth': '0px', 'maxWidth': '220px',
+                                                     'whiteSpace': 'normal',
+                                                 }
+                                                 ),
+                            html.Div(id='data-table-loadings-container'),
+                        ]),
+                        html.Div([html.A(
+                            'Download Loadings data',
+                            id='download-link-loadings',
+                            download='Loadings_data.csv',
+                            href="",
+                            target="_blank"
+                        )]),
+                    ], style={'padding': 20}),
+                    html.Div([
+                        html.Div([
+                            html.Label(["Cos2 from PCA"])
+                        ], style={'font-weight': 'bold'}),
+                        html.Div([
+                            dash_table.DataTable(id='data-table-cos2',
+                                                 editable=False,
+                                                 filter_action='native',
+                                                 sort_action='native',
+                                                 sort_mode='multi',
+                                                 selected_columns=[],
+                                                 selected_rows=[],
+                                                 page_action='native',
+                                                 column_selectable='single',
+                                                 page_current=0,
+                                                 page_size=20,
+                                                 style_data={'height': 'auto'},
+                                                 style_table={'overflowX': 'scroll',
+                                                              'maxHeight': '300px',
+                                                              'overflowY': 'scroll'},
+                                                 style_cell={
+                                                     'minWidth': '0px', 'maxWidth': '220px',
+                                                     'whiteSpace': 'normal',
+                                                 }
+                                                 ),
+                            html.Div(id='data-table-cos2-container'),
+                        ]),
+                        html.Div([html.A(
+                            'Download Cos2 data',
+                            id='download-link-cos2',
+                            download='Cos2_data.csv',
+                            href="",
+                            target="_blank"
+                        )]),
+                    ], style={'padding': 20}),
+                    html.Div([
+                        html.Div([
+                            html.Label(["Contributions from PCA"])
+                        ], style={'font-weight': 'bold'}),
+                        html.Div([
+                            dash_table.DataTable(id='data-table-contrib',
+                                                 editable=False,
+                                                 filter_action='native',
+                                                 sort_action='native',
+                                                 sort_mode='multi',
+                                                 selected_columns=[],
+                                                 selected_rows=[],
+                                                 page_action='native',
+                                                 column_selectable='single',
+                                                 page_current=0,
+                                                 page_size=20,
+                                                 style_data={'height': 'auto'},
+                                                 style_table={'overflowX': 'scroll',
+                                                              'maxHeight': '300px',
+                                                              'overflowY': 'scroll'},
+                                                 style_cell={
+                                                     'minWidth': '0px', 'maxWidth': '220px',
+                                                     'whiteSpace': 'normal',
+                                                 }
+                                                 ),
+                            html.Div(id='data-table-contrib-container'),
+                        ]),
+                        html.Div([html.A(
+                            'Download Contributions data',
+                            id='download-link-contrib',
+                            download='Contributions_data.csv',
+                            href="",
+                            target="_blank"
+                        )]),
+                    ], style={'padding': 20}),
+                ])])
+    ])
+    ])])
 
 
 # READ FILE

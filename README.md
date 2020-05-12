@@ -1,4 +1,4 @@
-# Principal Components Analysis Visualisation Tools
+# Principal Component Analysis Visualisation Tools
 
 ## About
 These tools aim to provide a reproducible and consistent data visualisation platform where experimental and computational researchers can perform Principal Component Analysis (PCA) to explore their data without requiring a line of code. PCA is a dimension reduction technique that can be used to reduce a large set of variables to a smaller set of orthogonal (uncorrelated) variables called principal components that still contains most of the datasets information. 

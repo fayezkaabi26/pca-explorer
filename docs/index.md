@@ -85,7 +85,7 @@ One of these two buttons is selected at all times. Clicking ‘Show closest data
 </p>
 ***Figure 8: Hover options *** <br>
 
-#### ** Remove outliers and deciding between using a correlation or covariance matrix **
+#### ** Removing outliers and matrix type options **
 On all plots and downloadable data tables, users can determine if they would like to remove any outliers present in their data. Any variable that contains values above and below 3 standard deviations from the mean are removed. <br> The user can also determine if they would like the tool to use a covariance or correlation matrix. When the data is standardised (scaled) by removing the mean and scaling to unit variance, the covariance matrix becomes the correlation matrix. When the variables are of similar scales a covariance matrix is more appropriate. A correlation matrix is used when the variables in the data set have varying scales (order of magnitudes). Using data with different orders of magnitude will result in the variables with the highest variance dominating the first principal component (the variance maximising property). Standardising data will ensure all variables have equal variance. It must be noted that standardising your data set assumes that your data follows a normal distribution. Use the covariance matrix when the variance of your variables are important.
 
 ## **Scree Plots**

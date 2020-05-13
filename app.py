@@ -571,7 +571,7 @@ app.layout = html.Div([
                              " downloadable PCA data"])
                     ], style={'font-weight': 'bold', 'padding-left': '1%'}),
                     html.Div([html.A(
-                        'Download PCA Data',
+                        'Download PCA Data (scores for each principal component)',
                         id='download-link',
                         href="",
                         target="_blank"

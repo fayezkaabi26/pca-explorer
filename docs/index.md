@@ -6,7 +6,7 @@
 ## **About**
 <p>These tools aim to provide a reproducible and consistent data visualisation platform where experimental and computational researchers can use big data and statistical analysis to explore their data or the adsorption related data we provide to find the best materials for specific applications. <br> <br>
 Principal Component Analysis (PCA) is a dimension reduction technique that can be used to reduce a large set of observable variables to a smaller set of latent variables that still contain most of the information in the large set (feature extraction). This is done by transforming a number of (possibly) correlated variables into a number of orthogonal (uncorrelated) variables called principal components to find the directions of maximal variance. PCA can be used to ease data visualisation by having fewer dimensions to plot or be used as a pre processing step before using another ML algorithm for regression and classification tasks. PCA can be used to improve an ML algorithm performance, reduce overfitting and reduce noise. <br> <br>
-The Principal Component Analysis Visualisation Tools runs PCA for the user and populates a Scree plot and feature correlation heatmaps to allow the user to determine if PCA is the right dimensionality reduction technqiue for the user. Subsequently, the user can drop variables they would not like as features, remove outliers and produce biplots, cos2 plots and contribution plots for the user to analyse principal components computed from the analysis. All the information from the PCA is retained and the user can download this data from the datatables provided.</p>
+The Principal Component Analysis Visualisation Tools runs PCA for the user and populates a Scree plot and feature correlation heatmaps to allow the user to determine if PCA is the right dimensionality reduction technqiue for the user. Here after, the user can drop variables they would not like as features and produce biplots, cos2 plots and contribution plots for the user to analyse principal components computed from the analysis. All the information from the PCA is retained and the user can download this data from the datatables provided.</p>
 <p align="center"> 
   <img src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/explorer-screenshot.png">
 </p>
@@ -49,7 +49,7 @@ The data file to upload **must** meet the following requirements: <br>
  ***Figure 3: Download plot as PNG*** <br><br>
 
 #### **Zoom modes**
-If the plot’s mode is set to ‘Zoom’, click and drag on the plot to zoom-in and double click to zoom-out completely. i.e. auto scale of both axis. The user can also zoom in and out by clicking on the + and – buttons. Axes labels will automatically optimize as you zoom in.
+If the plots mode is set to ‘Zoom’, click and drag on the plot to zoom-in and double click to zoom-out completely (auto scale of both axis). The user can also zoom in and out by clicking on the + and – buttons. Axes labels will automatically optimize as you zoom in.
  <p>
   <img width="300" height="50" display= "inline-block" src="https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/MkDocs/zoom-icon.png">
 </p>
@@ -86,7 +86,7 @@ One of these two buttons is selected at all times. Clicking ‘Show closest data
 ***Figure 8: Hover options *** <br>
 
 #### ** Remove outliers and deciding between using a correlation or covariance matrix **
-On all plots and downloadable data tables users can determine if they would like to remove any outliers present in their data. Any variable that contains values above and below 3 standard deviations from the mean are removed. <br> The user can also determine if they would like the tool to use a covariance or correlation matrix. When the data is standardised (scaled) by removing the mean and scaling to unit variance, the covariance matrix becomes the correlation matrix. When the variables are of similar scales a covariance matrix is more appropriate. A correlation matrix is used when the variables in the data set have varying scales (order of magnitudes). Using data with different orders of magnitude will result in the variables with the highest variance dominating the first principal component (the variance maximising property). Standardising data will ensure all variables have equal variance. It must be noted that standardising your data set assumes that your data follows a normal distribution. Use the covariance matrix when the variance of your variables are important.
+On all plots and downloadable data tables, users can determine if they would like to remove any outliers present in their data. Any variable that contains values above and below 3 standard deviations from the mean are removed. <br> The user can also determine if they would like the tool to use a covariance or correlation matrix. When the data is standardised (scaled) by removing the mean and scaling to unit variance, the covariance matrix becomes the correlation matrix. When the variables are of similar scales a covariance matrix is more appropriate. A correlation matrix is used when the variables in the data set have varying scales (order of magnitudes). Using data with different orders of magnitude will result in the variables with the highest variance dominating the first principal component (the variance maximising property). Standardising data will ensure all variables have equal variance. It must be noted that standardising your data set assumes that your data follows a normal distribution. Use the covariance matrix when the variance of your variables are important.
 
 ## **Scree Plots**
 <p>
@@ -95,24 +95,24 @@ On all plots and downloadable data tables users can determine if they would like
 ***Figure 9: Scree plot tab screenshot *** <br>
 
 This tab helps the user decide how many principal components to keep. The following criterion can be helpful in determining this: <br>
-1) A scree plot plots eigenvalues according to their size against principal components in order to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, principal components that only appear before the elbow.
-2)Retain the first k components which explain a large proportion of the total variation, usually 70-80%.
-3) Using the Kaiser criterion can also help decide how many principal components to keep. The Kaiser rule is to drop all components with eigenvalues less than 1.0 – this being the eigenvalue equal to the information accounted for by an average single item.
-3) Consider whether the component has a sensible and useful interpretation. Is the variation explained in the data an adequate amount for your needs?
+1) A scree plot plots eigenvalues according to their size against principal components in order to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, retain principal components that only appear before the elbow.
+2) Retain the first k components which explain a large proportion of the total variation, usually 70-80%.
+3) The Kaiser criterion can also help decide how many principal components to keep. The Kaiser rule is to drop all components with eigenvalues less than 1.0 – this being the eigenvalue equal to the information accounted for by an average single item.
+3) Consider whether the component has a sensible and useful interpretation. Is the variation explained in the data an adequate amount?
 
 ### **Scree Plot Eigenvalues**
 A scree plot plots eigenvalues according to their size against principal components in order to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, principal components that only appear before the elbow.
 
 ### **Cumulative Scree Plot Proportion of Explained Variance**
 
-The proportion of explained variance by a principal component is the ratio between the variance of that principal component and the total variance expressed as a percentage. i.e. An explained variance of 42% suggests that the respective principal component will explain 42% of the total variance in the data set. This plot can allow the user to see what % of their data they will lose by reducing the variables used to n principal components and determine if PCA is a suitable technique to use on their data. 
+The proportion of explained variance by a principal component is the ratio between the variance of that principal component and the total variance expressed as a percentage. i.e. An explained variance of 42% suggests that the respective principal component will explain 42% of the total variance in the data set. This plot can allow the user to see what % of their data they will lose by reducing the variables used to k principal components and determine if PCA is a suitable technique to use on their data. 
 
 
 ## **Feature Correlation**
-The feature correlation heatmaps can be used to determine the correlation between features and features and principal components. Users can remove outliers from uploaded data, choose matrix type (see functions found on PCA plots) and choose colorscales for the heatmap (Viridis and Plasma).
+The feature correlation heatmaps can be used to determine the correlation between features and principal components. Users can remove outliers from uploaded data, choose the matrix type for PCA (see functions found on PCA plots) and choose colorscales for the heatmap (Viridis and Plasma).
 
 #### **Feature Correlation Analysis**
-Feature correlation plots the coefficient of determination (R-squared) of features. Correlation coefficient (R) measures linear relationship between two variables, while coefficient of determination measures explained variation. Highly correlated variables can be dealt with by using PCA to obtain a set of orthogonal variables or removed before further analysis if PCA is a not suitable technique.
+THe feature correlation heatmap plots the coefficient of determination (R-squared) of features. Correlation coefficient (R) measures linear relationship between two variables, while coefficient of determination measures explained variation. Highly correlated variables can be dealt with by using PCA to obtain a set of orthogonal variables or removed before further analysis if PCA is a not suitable technique.
 
 <p>
   <img width="450" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/feature-correlation.png">
@@ -131,7 +131,7 @@ Principal Component and Feature Correlation Analysis plots the loadings of each 
 This tab contains the main PCA tool plotting capabilities. Users can select if they would like to use all variables in the uploaded data set as features or drop certian variables. The user can plot a loading plot, a biplot (scores + loadings), a cos2 plot and a contribution plot. The biplot can take up to 4 dimensions as users can include size and color variables of any features that were dropped before running the PCA tool.<br>
 
 ### **Biplot**
-A biplot contains both scores and loadings from PCA. Biplots are a graphical method for displaying both the variables and sample units described by a multivariate data matrix. Scores are linear combinations of the data that are determined by the coefficients for each principal component. A score plot plots the scores of the first principal component (x axis) against the second (y axis). The loading plot shows how strongly each feature influences a principal component. A loading plot is the the loadings of the first and second principal components expressed as vectors. The figure below shows when the user has decided to use all variables as features in their PCA.
+A biplot contains both scores and loadings from PCA. Biplots are a graphical method for displaying both the variables and sample units described by a multivariate data matrix. Scores are linear combinations of the data that are determined by the coefficients for each principal component. A score plot plots the scores of the first principal component (x axis) against the second (y axis). The loading plot shows how strongly each feature influences a principal component. A loading plot is the loadings of the first and second principal components expressed as vectors. The figure below shows when the user has decided to use all variables as features in their PCA.
 <p>
   <img width="500" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/all-variable-biplot.png">
 </p>
@@ -144,7 +144,7 @@ A loading plot shows how strongly each feature influences a principal component.
 </p>
 
 ***Figure 13: Loadings plot*** <br>
-The figure below shows when the user has decided to use custom variables to decide what variables to use as features in their PCA. A user may decide to drop dependent variables that would be used as target variables (variables one would like to predict) in further machine learning algorithms. In order to populate the biplot, after pressing the custom radio buttom the user must select which variables they would like to drop in their analysis. If you have a large dataset, this may take a few seconds to compute - the faded headings tab will return to normal once fully computed.
+The figure below shows when the user has decided to use custom variables to decide what variables to use as features in their PCA. A user may decide to drop dependent variables that would be used as target variables (variables one would like to predict) in further machine learning algorithms. In order to populate the biplot, after pressing the custom radio button the user **must** select which variables they would like to drop in their analysis. If you have a large dataset, this may take a few seconds to compute - the faded headings tab will return to normal once fully computed.
 <p>
   <img width="500" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/custom-variable-biplot.png">
 </p>

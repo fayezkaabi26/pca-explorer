@@ -6,7 +6,7 @@ These tools aim to provide a reproducible and consistent data visualisation plat
 
 
 ### App Manual
-- The app manual, explaining data file upload requirements, features of the tool and how to read the plot outputs can be found [here]
+- The app manual, explaining data file upload requirements, features of the tool and how to read the plot outputs can be found [here](https://aaml-analytics.github.io/pca-explorer/)
 
 ## Deploying to Heroku
 ```bash

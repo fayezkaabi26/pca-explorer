@@ -225,7 +225,7 @@ app.layout = html.Div([
                         " use a correlation matrix.")],
                         style={'padding-left': '1%'}),
                     html.Div([
-                        html.Label(["You should use attempt to use at least..."
+                        html.Label(["You should attempt to use at least..."
 
                                        , html.Div(id='var-output-container-filter')])
                     ], style={'padding-left': '1%'}
@@ -288,8 +288,7 @@ app.layout = html.Div([
                                     html.Div([
                                         html.P("There are usually two ways multicollinearity, "
                                                "which is when there are a number of variables "
-                                               "that are highly correlated, is dealt with "
-                                               "before analysis:"),
+                                               "that are highly correlated, is dealt with:"),
                                         html.P("1) Use PCA to obtain a set of orthogonal ("
                                                "not correlated) variables to analyse."),
                                         html.P("2) Use correlation of determination (R²) to "
@@ -299,7 +298,7 @@ app.layout = html.Div([
                                                "is ~0.7."),
                                         html.P(
                                             "In any case, it depends on the machine learning algorithm you may apply later. For correlation robust algorithms,"
-                                            " such as Random Forest, correlation of features will not be a concern. For non-correlation robust algorithms such as Linear Regression, "
+                                            " such as Random Forest, correlation of features will not be a concern. For non-correlation robust algorithms such as Linear Discriminant Analysis, "
                                             "all high correlation variables should be removed.")
 
                                     ], style={'padding-left': '1%'}
@@ -328,9 +327,7 @@ app.layout = html.Div([
                             )])
                     ], style={'padding-left': '1%'}),
                     html.Div([
-                        html.P("For custom variables..."),
-                        html.P(
-                            " Input variables you would not like as features in your PCA:"),
+                        html.P("For custom variables input variables you would not like as features in your PCA:"),
                         html.Label(
                             [
                                 "Note: Only input numerical variables (non-numerical variables have already "
@@ -389,17 +386,13 @@ app.layout = html.Div([
                                                  "Note: Use a correlation matrix when your variables have different scales and you want to weight "
                                                  "all the variables equally. Use a covariance matrix when your variables have different scales and"
                                                  " you want to give more emphasis to variables with higher variances. When unsure"
-                                                 " use a correlation matrix.")],
-                                                 style={'padding-left': '1%'}),
-                                             html.Div([
-                                                 html.P(
-                                                     "Note that PCA is an unsupervised technique. It only "
+                                                 " use a correlation matrix. PCA is an unsupervised machine learning technique - it only "
                                                      "looks at the input features and does not take "
                                                      "into account the output or the target"
-                                                     " (response) variable.")
-                                             ], style={'padding-left': '1%'}),
+                                                     " (response) variable.")],
+                                                 style={'padding-left': '1%'}),
                                              html.Div([
-                                                 html.P("For custom variables..."),
+                                                 html.P("For variables you have dropped..."),
                                                  html.Label([
                                                      "Would you like to introduce a first target variable"
                                                      " into your data visualisation?"
@@ -459,15 +452,14 @@ app.layout = html.Div([
                                                      "A loading plot shows how "
                                                      "strongly each characteristic (variable)"
                                                      " influences a principal component. The angles between the vectors"
-                                                     " tell us how characteristics correlate with one another... "),
-                                                 html.P(
-                                                     "1) When two vectors are close, forming a small angle, the two "
-                                                     "variables they represent are positively correlated. "
-                                                     "2) If they meet each other at 90°, they are not likely to be correlated. "
-                                                     "3) When they diverge and form a large angle (close to 180°), they are negative correlated."),
+                                                     " tell us how characteristics correlate with one another: "),
+                                                 html.P("1) When two vectors are close, forming a small angle, the two "
+                                                     "variables they represent are positively correlated. "),
+                                                 html.P("2) If they meet each other at 90°, they are not likely to be correlated. "),
+                                                 html.P("3) When they diverge and form a large angle (close to 180°), they are negative correlated."),
                                                  html.P(
                                                      "The Score Plot involves the projection of the data onto the PCs in two dimensions."
-                                                     "The plot contains the original date but in the rotated (PC) coordinate system"),
+                                                     "The plot contains the original data but in the rotated (PC) coordinate system"),
                                                  html.P(
                                                      "A biplot merges a score plot and loading plot together.")
                                              ], style={'padding-left': '1%'}
@@ -1377,7 +1369,7 @@ def update_graph_stat(outlier, colorscale, matrix_type, data):
     return {'data': traces,
             'layout': go.Layout(title='<b>PC and Feature Correlation Analysis</b>', xaxis={'title': 'Features'},
                                 titlefont=dict(family='Georgia', size=16),
-                                yaxis={'title': 'Principal Component'},
+                                yaxis={'title_text': 'Principal Component', 'title_standoff': 35},
                                 hovermode='closest', margin={'b': 110, 't': 50, 'l': 50},
                                 font=dict(family="Helvetica", size=11)),
             }
@@ -4317,3 +4309,5 @@ if __name__ == '__main__':
     # For Development only, otherwise use gunicorn or uwsgi to launch, e.g.
     # gunicorn -b 0.0.0.0:8050 index:app.server
     app.run_server(debug=False)
+
+# OUTPUT: YOU SHOULD USE AT LEAST X PRINCIPAL COMPONENTS (≥85% of explained variance)

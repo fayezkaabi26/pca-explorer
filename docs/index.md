@@ -85,7 +85,7 @@ One of these two buttons is selected at all times. Clicking ‘Show closest data
 </p>
 ***Figure 8: Hover options *** <br>
 
-#### ** Removing outliers and matrix type options **
+#### ** Remove outliers and deciding between using a correlation or covariance matrix **
 On all plots and downloadable data tables, users can determine if they would like to remove any outliers present in their data. Any variable that contains values above and below 3 standard deviations from the mean are removed. <br> The user can also determine if they would like the tool to use a covariance or correlation matrix. When the data is standardised (scaled) by removing the mean and scaling to unit variance, the covariance matrix becomes the correlation matrix. When the variables are of similar scales a covariance matrix is more appropriate. A correlation matrix is used when the variables in the data set have varying scales (order of magnitudes). Using data with different orders of magnitude will result in the variables with the highest variance dominating the first principal component (the variance maximising property). Standardising data will ensure all variables have equal variance. It must be noted that standardising your data set assumes that your data follows a normal distribution. Use the covariance matrix when the variance of your variables are important.
 
 ## **Scree Plots**
@@ -144,7 +144,7 @@ A loading plot shows how strongly each feature influences a principal component.
 </p>
 
 ***Figure 13: Loadings plot*** <br>
-The figure below shows when the user has decided to use custom variables to decide what variables to use as features in their PCA. A user may decide to drop dependent variables that would be used as target variables (variables one would like to predict) in further machine learning algorithms. In order to populate the biplot, after pressing the custom radio button the user **must** select which variables they would like to drop in their analysis. If you have a large dataset, this may take a few seconds to compute - the faded headings tab will return to normal once fully computed.
+The figure below shows when the user has decided to use custom variables to decide what variables to use as features in their PCA. A user may decide to drop dependent variables that would be used as target variables (variables one would like to predict) in further machine learning algorithms. Note that PCA is an unsupervised machine learning technique so the model learns without any target variables.  In order to populate the biplot, after pressing the custom radio button the user **must** select which variables they would like to drop in their analysis. If you have a large dataset, this may take a few seconds to compute - the faded headings tab will return to normal once fully computed.
 <p>
   <img width="500" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/custom-variable-biplot.png">
 </p>
@@ -177,7 +177,7 @@ A contribution plot contains the contributions (in percentage) of the variables 
 ***Figure 18: Contribution plot*** <br>
 
 ## **Methods and Formulas for Principal Component Analysis**
-WRITE
+To read more about the mathematics behind PCA, Abdi et al. have published a comprehensive overview of this technique. Click [here](https://drive.google.com/file/d/16p_n01MkkZDIg_yErkANpeHcRPNlxKVz/view?usp=sharing) to view and download. 
 
 ## **Contributing**
 For changes, please open an issue first to discuss what you would like to change. You can also contact the AAML research group to discuss further contributions and collaborations 

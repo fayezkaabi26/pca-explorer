@@ -1,12 +1,12 @@
 # Welcome 
 
-- To deploy the app on command line access our GitHub repository [here](https://github.com/aaml-analytics/pca-explorer)
+- To deploy the app on command line or to create a URL using Heroku, access our GitHub repository [here](https://github.com/aaml-analytics/mof-explorer)
 
 
 ## **About**
 <p>These tools aim to provide a reproducible and consistent data visualisation platform where experimental and computational researchers can use big data and statistical analysis to explore their data or the adsorption related data we provide to find the best materials for specific applications. <br> <br>
-Principal Component Analysis (PCA) is a dimension reduction technique that can be used to reduce a large set of observable variables to a smaller set of latent variables that still contain most of the information in the large set (feature extraction). This is done by transforming a number of (possibly) correlated variables into a number of orthogonal (uncorrelated) variables called principal components to find the directions of maximal variance. PCA can be used to ease data visualisation by having fewer dimensions to plot or be used as a pre processing step before using another ML algorithm for regression and classification tasks. PCA can be used to improve an ML algorithm performance, reduce overfitting and reduce noise. <br> <br>
-The Principal Component Analysis Visualisation Tools runs PCA for the user and populates a Scree plot and feature correlation heatmaps to allow the user to determine if PCA is the right dimensionality reduction technqiue for the user. Here after, the user can drop variables they would not like as features and produce biplots, cos2 plots and contribution plots for the user to analyse principal components computed from the analysis. All the information from the PCA is retained and the user can download this data from the datatables provided.</p>
+Principal Component Analysis (PCA) is a dimension reduction technique that can be used to reduce a large set of observable variables to a smaller set of latent variables that still contain most of the information in the large set (feature extraction). This is done by transforming a number of (possibly) correlated variables into a number of orthogonal (uncorrelated) variables called principal components to find the directions of maximal variance. PCA can be used to ease data visualisation by having fewer dimensions to plot or be used as a pre-processing step before using another ML algorithm for regression and classification tasks. PCA can be used to improve an ML algorithm performance, reduce overfitting and reduce noise. <br> <br>
+The Principal Component Analysis Visualisation Tools runs PCA for the user and populates a Scree plot and feature correlation heatmaps to allow the user to determine if PCA is the right dimensionality reduction technqiue for the user. Hereafter, the user can drop variables they would not like as features and produce biplots, cos2 plots and contribution plots for the user to analyse principal components computed from the analysis. All the information from the PCA is retained and the user can download this data from the data tables provided.</p>
 <p align="center"> 
   <img src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/explorer-screenshot.png">
 </p>
@@ -32,7 +32,7 @@ The data file to upload **must** meet the following requirements: <br>
 | HOXKUB    | None   | 5        | 0.4167                | 16.0261               | 20.7236      | … |
 | …         | …      | …        | …                     | …                     | …            | … |
 
-<br> The tab of the app will fade when the app is computing a user input. It will return to its original color once it has completed the users input (Figure 2). In addition to the faded tab, the dashboard browser tab will show “Updating…” when the tool is updating the data. Wait for this  to return to ‘Dash’ before using the tool. This is when the file upload is complete.
+<br> The tab of the app will fade when the app is computing a user input. It will return to its original color once it has completed the user's input (Figure 2). In addition to the faded tab, the dashboard browser tab will show “Updating…” when the tool is updating the data. Wait for this to return to ‘Dash’ before using the tool. This is when the file upload is complete.
 <br>
 <p align="center"> 
   <img src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/pca-tab-fading.png">
@@ -86,7 +86,7 @@ One of these two buttons is selected at all times. Clicking ‘Show closest data
 ***Figure 8: Hover options *** <br>
 
 #### ** Remove outliers and deciding between using a correlation or covariance matrix **
-On all plots and downloadable data tables, users can determine if they would like to remove any outliers present in their data. Any variable that contains values above and below 3 standard deviations from the mean are removed. <br> The user can also determine if they would like the tool to use a covariance or correlation matrix. When the data is standardised (scaled) by removing the mean and scaling to unit variance, the covariance matrix becomes the correlation matrix. When the variables are of similar scales a covariance matrix is more appropriate. A correlation matrix is used when the variables in the data set have varying scales (order of magnitudes). Using data with different orders of magnitude will result in the variables with the highest variance dominating the first principal component (the variance maximising property). Standardising data will ensure all variables have equal variance. It must be noted that standardising your data set assumes that your data follows a normal distribution. Use the covariance matrix when the variance of your variables are important.
+On all plots and downloadable data tables, users can determine if they would like to remove any outliers present in their data. Any variable that contains values above and below 3 standard deviations from the mean are removed. <br> The user can also determine if they would like the tool to use a covariance or correlation matrix. When the data is standardised (scaled) by removing the mean and scaling to unit variance, the covariance matrix becomes the correlation matrix. When the variables are of similar scales a covariance matrix is more appropriate. A correlation matrix is used when the variables in the data set have varying scales (order of magnitudes). Using data with different orders of magnitude will result in the variables with the highest variance dominating the first principal component (the variance maximising property). Standardising data will ensure all variables have equal variance. It must be noted that standardising your data set assumes that your data follow a normal distribution. Use the covariance matrix when the variance of your variables are important.
 
 ## **Scree Plots**
 <p>
@@ -94,14 +94,14 @@ On all plots and downloadable data tables, users can determine if they would lik
 </p>
 ***Figure 9: Scree plot tab screenshot *** <br>
 
-This tab helps the user decide how many principal components to keep. The following criterion can be helpful in determining this: <br>
-1) A scree plot plots eigenvalues according to their size against principal components in order to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, retain principal components that only appear before the elbow.
+This tab helps the user decide how many principal components to keep. The following criterion can help determine this: <br>
+1) A scree plot plots eigenvalues according to their size against principal components to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, retain principal components that only appear before the elbow.
 2) Retain the first k components which explain a large proportion of the total variation, usually 70-80%.
 3) The Kaiser criterion can also help decide how many principal components to keep. The Kaiser rule is to drop all components with eigenvalues less than 1.0 – this being the eigenvalue equal to the information accounted for by an average single item.
 3) Consider whether the component has a sensible and useful interpretation. Is the variation explained in the data an adequate amount?
 
 ### **Scree Plot Eigenvalues**
-A scree plot plots eigenvalues according to their size against principal components in order to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, principal components that only appear before the elbow.
+A scree plot plots eigenvalues according to their size against principal components to see if there is a point in the graph (often called the elbow) where the gradient of the graph goes from steep to flat. As a rule of thumb, principal components that only appear before the elbow.
 
 ### **Cumulative Scree Plot Proportion of Explained Variance**
 
@@ -109,10 +109,10 @@ The proportion of explained variance by a principal component is the ratio betwe
 
 
 ## **Feature Correlation**
-The feature correlation heatmaps can be used to determine the correlation between features and principal components. Users can remove outliers from uploaded data, choose the matrix type for PCA (see functions found on PCA plots) and choose colorscales for the heatmap (Viridis and Plasma).
+The feature correlation heatmaps can be used to determine the correlation between features and principal components. Users can remove outliers from uploaded data, choose the matrix type for PCA (see functions found on PCA plots) and choose color scales for the heatmap (Viridis and Plasma).
 
 #### **Feature Correlation Analysis**
-THe feature correlation heatmap plots the coefficient of determination (R-squared) of features. Correlation coefficient (R) measures linear relationship between two variables, while coefficient of determination measures explained variation. Highly correlated variables can be dealt with by using PCA to obtain a set of orthogonal variables or removed before further analysis if PCA is a not suitable technique.
+The feature correlation heatmap plots the coefficient of determination (R-squared) of features. The correlation coefficient (R) measures the linear relationship between two variables, while the coefficient of determination measures explained variation. Highly correlated variables can be dealt with by using PCA to obtain a set of orthogonal variables or removed before further analysis if PCA is a not suitable technique.
 
 <p>
   <img width="450" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/feature-correlation.png">
@@ -128,17 +128,17 @@ Principal Component and Feature Correlation Analysis plots the loadings of each 
 ***Figure 11: PC and Feature Correlation Analysis *** <br>
 
 ## **Plots**
-This tab contains the main PCA tool plotting capabilities. Users can select if they would like to use all variables in the uploaded data set as features or drop certian variables. The user can plot a loading plot, a biplot (scores + loadings), a cos2 plot and a contribution plot. The biplot can take up to 4 dimensions as users can include size and color variables of any features that were dropped before running the PCA tool.<br>
+This tab contains the main PCA tool plotting capabilities. Users can select if they would like to use all variables in the uploaded data set as features or drop certain variables. The user can plot a loading plot, a biplot (scores + loadings), a cos2 plot and a contribution plot. The biplot can take up to 4 dimensions as users can include size and color variables of any features that were dropped before running the PCA tool.<br>
 
 ### **Biplot**
-A biplot contains both scores and loadings from PCA. Biplots are a graphical method for displaying both the variables and sample units described by a multivariate data matrix. Scores are linear combinations of the data that are determined by the coefficients for each principal component. A score plot plots the scores of the first principal component (x axis) against the second (y axis). The loading plot shows how strongly each feature influences a principal component. A loading plot is the loadings of the first and second principal components expressed as vectors. The figure below shows when the user has decided to use all variables as features in their PCA.
+A biplot contains both scores and loadings from PCA. Biplots are a graphical method for displaying both the variables and sample units described by a multivariate data matrix. Scores are linear combinations of the data that are determined by the coefficients for each principal component. A score plot plots the scores of the first principal component (x-axis) against the second (y-axis). The loading plot shows how strongly each feature influences a principal component. A loading plot is the loadings of the first and second principal components expressed as vectors. The figure below shows when the user has decided to use all variables as features in their PCA.
 <p>
   <img width="500" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/all-variable-biplot.png">
 </p>
 
 ***Figure 12: All variables Biplot*** <br>
 
-A loading plot shows how strongly each feature influences a principal component. The angles between each vector also show how correlated they are with one another. When two vectors are close, forming a small angle, the two variables they represent are positively correlated. If the two vectors meet each other at 90°, they are likely to be uncorrelated. When they diverge and form a large angle (close to 180°), they are negative correlated.
+A loading plot shows how strongly each feature influences a principal component. The angles between each vector also show how correlated they are with one another. When two vectors are close, forming a small angle, the two variables they represent are positively correlated. If the two vectors meet each other at 90°, they are likely to be uncorrelated. When they diverge and form a large angle (close to 180°), they are negatively correlated.
 <p>
   <img width="500" height="180" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/loading-biplot.png">
 </p>
@@ -162,7 +162,7 @@ As previously mentioned, the user can view the biplot in 3 and 4 dimensions by s
 ***Figure 16: Biplot with color and size variables *** <br>
 
 ### **Cos2 plot**
-The squared cosine (cos2) shows the importance of a component for a given observation i.e. measures how much a variable is represented in a component. Components with a large sqaured cosine contribute a relatively large portion to the total distance of a given observation to the origin and therefore these components are important for that observation. The eigenvalue associated to a component is equal to the sum of the squared cosines for this component.
+The squared cosine (cos2) shows the importance of a component for a given observation i.e. measures how much a variable is represented in a component. Components with a large squared cosine contribute a relatively large portion to the total distance of a given observation to the origin and therefore these components are important for that observation. The eigenvalue associated to a component is equal to the sum of the squared cosines for this component.
 
 <p>
   <img width="500" height="250" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/cos2-plot.png">
@@ -170,14 +170,14 @@ The squared cosine (cos2) shows the importance of a component for a given observ
 ***Figure 17: Cos2 plot*** <br>
 
 ### **Contribution plot**
-A contribution plot contains the contributions (in percentage) of the variables to the principal components. The contribution of a variable to a given principal component is the cos2 of said variable divided by the total cos2 of the principal component.
+A contribution plot contains the contributions (in percentage) of the variables to the principal components. The contribution of a variable to a given principal component is the cos2 of a said variable divided by the total cos2 of the principal component.
 <p>
   <img width="500" height="230" src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/contribution-plot.png">
 </p>
 ***Figure 18: Contribution plot*** <br>
 
 ## Downloadable data tables
-This tab provides table overviews of the users PCA Analysis. Results correspond to the variables chosen as features in the 'Plots tab'. The user can decide to remove or keep outliers or use a covariance or correlation matrix in every tab. These inputs are also available in the 'Data table' tab and will populate the data tables accordingly. Users can download the tables as shown in this tab. Downloadable tables include: PCA scores, feature correlation analysis, eigen value analysis, loadings, squared cosines and contributions from PCA. Any change in input of the variables used as features in the 'Plot' tab, removing outliers in the 'Data tables tab' and choosing between a covariance and correlation matrix in the 'Data tables tab' will automatically update the data table and also the downloadable data. All downloadable files will be saved in the 'Downloads' folder of your laptop in  ```.csv``` format.
+This tab provides table overviews of the users PCA Analysis. Results correspond to the variables chosen as features in the 'Plots tab'. The user can decide to remove or keep outliers or use a covariance or correlation matrix in every tab. These inputs are also available in the 'Data table' tab and will populate the data tables accordingly. Users can download the tables as shown in this tab. Downloadable tables include PCA scores, feature correlation analysis, eigenvalue analysis, loadings, squared cosines and contributions from PCA. Any change in input of the variables used as features in the 'Plot' tab, removing outliers in the 'Data tables tab' and choosing between a covariance and correlation matrix in the 'Data tables tab' will automatically update the data table and also the downloadable data. All downloadable files will be saved in the 'Downloads' folder of your laptop in  ```.csv``` format.
 <p>
   <img src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/data-table.png">
 </p>
@@ -187,7 +187,7 @@ This tab provides table overviews of the users PCA Analysis. Results correspond 
 To read more about the mathematics behind PCA, Abdi et al. have published a comprehensive overview of this technique. Click [here](https://drive.google.com/file/d/16p_n01MkkZDIg_yErkANpeHcRPNlxKVz/view?usp=sharing) to view and download. 
 
 ## **Contributing**
-For changes, please open an issue first to discuss what you would like to change. You can also contact the AAML research group to discuss further contributions and collaborations 
+For changes, please open an issue first to discuss what you would like to change. You can also contact the AAML research group to discuss further contributions and collaborations.
 
 ## **Contact Us**
   <img width="200" height="100" src="https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/MkDocs/A2ML-logo-dark.png">

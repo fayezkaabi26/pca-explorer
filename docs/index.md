@@ -176,6 +176,13 @@ A contribution plot contains the contributions (in percentage) of the variables 
 </p>
 ***Figure 18: Contribution plot*** <br>
 
+## Downloadable data tables
+This tab provides table overviews of the users PCA Analysis. Results correspond to the variables chosen as features in the 'Plots tab'. The user can decide to remove or keep outliers or use a covariance or correlation matrix in every tab. These inputs are also available in the 'Data table' tab and will populate the data tables accordingly. Users can download the tables as shown in this tab. Downloadable tables include: PCA scores, feature correlation analysis, eigen value analysis, loadings, squared cosines and contributions from PCA. Any change in input of the variables used as features in the 'Plot' tab, removing outliers in the 'Data tables tab' and choosing between a covariance and correlation matrix in the 'Data tables tab' will automatically update the data table and also the downloadable data. All downloadable files will be saved in the 'Downloads' folder of your laptop in  ```.csv``` format.
+<p>
+  <img src="https://raw.githubusercontent.com/aaml-analytics/pca-explorer/master/docs/data-table.png">
+</p>
+***Figure 19: Download data tables*** <br>
+
 ## **Methods and Formulas for Principal Component Analysis**
 To read more about the mathematics behind PCA, Abdi et al. have published a comprehensive overview of this technique. Click [here](https://drive.google.com/file/d/16p_n01MkkZDIg_yErkANpeHcRPNlxKVz/view?usp=sharing) to view and download. 
 

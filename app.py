@@ -131,23 +131,6 @@ app.layout = html.Div([
             multiple=False
         ),
             html.Div(id='output-data-upload'),
-            dbc.Modal(
-                [
-                    dbc.ModalHeader(
-                        "Upload Error!"),
-                    dbc.ModalBody(
-                        "Please upload a .txt, .csv or .xls file."),
-                    dbc.ModalFooter(
-                        dbc.Button("Close",
-                                   id="close-upload",
-                                   className="ml-auto")
-                    ),
-                ],
-                id="modal-upload",
-                is_open=False,
-                centered=True,
-                size="xl"
-            )
         ]), ], style={'display': 'inline-block', 'padding-left': '1%', }),
     html.Div([dcc.Tabs([
         dcc.Tab(label='About', style=tab_style, selected_style=tab_selected_style,
@@ -311,7 +294,8 @@ app.layout = html.Div([
         dcc.Tab(label='Plots', style=tab_style,
                 selected_style=tab_selected_style,
                 children=[html.Div([
-
+                    html.Div([html.P("Selecting Features")], style={'padding-left': '1%',
+                                                                    'font-weight': 'bold'}),
                     html.Div([
                         html.P("Input here affects all plots, datatables and downloadable data output"),
                         html.Label([
@@ -387,9 +371,9 @@ app.layout = html.Div([
                                                  "all the variables equally. Use a covariance matrix when your variables have different scales and"
                                                  " you want to give more emphasis to variables with higher variances. When unsure"
                                                  " use a correlation matrix. PCA is an unsupervised machine learning technique - it only "
-                                                     "looks at the input features and does not take "
-                                                     "into account the output or the target"
-                                                     " (response) variable.")],
+                                                 "looks at the input features and does not take "
+                                                 "into account the output or the target"
+                                                 " (response) variable.")],
                                                  style={'padding-left': '1%'}),
                                              html.Div([
                                                  html.P("For variables you have dropped..."),
@@ -454,9 +438,11 @@ app.layout = html.Div([
                                                      " influences a principal component. The angles between the vectors"
                                                      " tell us how characteristics correlate with one another: "),
                                                  html.P("1) When two vectors are close, forming a small angle, the two "
-                                                     "variables they represent are positively correlated. "),
-                                                 html.P("2) If they meet each other at 90°, they are not likely to be correlated. "),
-                                                 html.P("3) When they diverge and form a large angle (close to 180°), they are negative correlated."),
+                                                        "variables they represent are positively correlated. "),
+                                                 html.P(
+                                                     "2) If they meet each other at 90°, they are not likely to be correlated. "),
+                                                 html.P(
+                                                     "3) When they diverge and form a large angle (close to 180°), they are negative correlated."),
                                                  html.P(
                                                      "The Score Plot involves the projection of the data onto the PCs in two dimensions."
                                                      "The plot contains the original data but in the rotated (PC) coordinate system"),
@@ -792,29 +778,6 @@ def parse_contents(contents, filename):
         return html.Div([
             'There was an error processing this file.'
         ])
-    return df
-
-
-# SIZE MODAL CALLBACK UPLOAD FILE
-@app.callback(
-    [Output('modal-upload', 'is_open'),
-     Output('output-data-upload', 'children')],
-    [
-        Input('data-table-upload', 'contents'),
-        Input('close-upload', 'n_clicks')],
-    [State('data-table-upload', 'filename')])
-def update_output(contents, modal_close, filename):
-    ctx = dash.callback_context
-    user_clicked = ctx.triggered[0]['prop_id'].split('.')[0]
-    df = parse_contents(contents, filename)
-    if not user_clicked or user_clicked == 'close':
-        return dash.no_update, False
-
-    if contents is None:
-        return [], False
-
-    if not filename.endswith(('.xls', '.csv', '.txt')):
-        return [], True
     return df
 
 
@@ -1367,11 +1330,17 @@ def update_graph_stat(outlier, colorscale, matrix_type, data):
         # coord: represent the correlation between the various feature and the principal component itself
         colorbar={"title": "Loading"}))
     return {'data': traces,
-            'layout': go.Layout(title='<b>PC and Feature Correlation Analysis</b>', xaxis={'title': 'Features'},
+            'layout': go.Layout(title='<b>PC and Feature Correlation Analysis</b>',
+                                xaxis=dict(title_text='Features', title_standoff=50),
                                 titlefont=dict(family='Georgia', size=16),
-                                yaxis={'title_text': 'Principal Component', 'title_standoff': 35},
-                                hovermode='closest', margin={'b': 110, 't': 50, 'l': 50},
-                                font=dict(family="Helvetica", size=11)),
+                                hovermode='closest', margin={'b': 110, 't': 50, 'l': 75},
+                                font=dict(family="Helvetica", size=11),
+                                annotations=[
+                                    dict(x=-0.16, y=0.5, showarrow=False, text="Principal Components",
+                                         xref='paper', yref='paper', textangle=-90,
+                                         font=dict(size=12))]
+                                ),
+
             }
 
 
@@ -1414,7 +1383,7 @@ def update_graph_stat(outlier, colorscale, data):
             'layout': go.Layout(title='<b>Feature Correlation Analysis</b>', xaxis={},
                                 titlefont=dict(family='Georgia', size=16),
                                 yaxis={},
-                                hovermode='closest', margin={'b': 110, 't': 50, 'l': 170, 'r': 50},
+                                hovermode='closest', margin={'b': 110, 't': 50, 'l': 180, 'r': 50},
                                 font=dict(family="Helvetica", size=11)),
             }
 
@@ -3828,14 +3797,14 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             pca_scale_covar = PCA(n_components=len(features))
             principalComponents_scale_covar = pca_scale_covar.fit_transform(x_scale_covar)
             principalDf_scale_covar = pd.DataFrame(data=principalComponents_scale_covar
-                                             , columns=['PC' + str(i + 1) for i in range(len(features))])
+                                                   , columns=['PC' + str(i + 1) for i in range(len(features))])
             # combining principle components and target
             finalDf_scale_covar = pd.concat([df[[df.columns[0]]], principalDf_scale_covar], axis=1)
             Var_scale_covar = pca_scale_covar.explained_variance_ratio_
             # calculating loading vector plot
             loading_scale_covar = pca_scale_covar.components_.T * np.sqrt(pca_scale_covar.explained_variance_)
             loading_scale_df_covar = pd.DataFrame(data=loading_scale_covar,
-                                            columns=["PC" + str(i + 1) for i in range(len(features))])
+                                                  columns=["PC" + str(i + 1) for i in range(len(features))])
             for i in loading_scale_df_covar.columns:
                 loading_scale_df_covar[i] = (loading_scale_df_covar[i] ** 2)
             line_group_scale_df_covar = pd.DataFrame(data=features, columns=['Features'])
@@ -3857,18 +3826,22 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             pca_outlier_scale_covar = PCA(n_components=len(features_outlier))
             principalComponents_outlier_scale_covar = pca_outlier_scale_covar.fit_transform(x_outlier_scale_covar)
             principalDf_outlier_scale_covar = pd.DataFrame(data=principalComponents_outlier_scale_covar,
-                                                     columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
+                                                           columns=['PC' + str(i + 1) for i in
+                                                                    range(len(features_outlier))])
             finalDf_outlier_scale_covar = pd.concat([outlier_names, principalDf_outlier_scale_covar], axis=1)
             Var_outlier_scale_covar = pca_outlier_scale_covar.explained_variance_ratio_
 
-            loading_outlier_scale_covar = pca_outlier_scale_covar.components_.T * np.sqrt(pca_outlier_scale_covar.explained_variance_)
+            loading_outlier_scale_covar = pca_outlier_scale_covar.components_.T * np.sqrt(
+                pca_outlier_scale_covar.explained_variance_)
             loading_outlier_scale_df_covar = pd.DataFrame(data=loading_outlier_scale_covar,
-                                                    columns=["PC" + str(i + 1) for i in range(len(features_outlier))])
+                                                          columns=["PC" + str(i + 1) for i in
+                                                                   range(len(features_outlier))])
 
             for i in loading_outlier_scale_df_covar.columns:
                 loading_outlier_scale_df_covar[i] = loading_outlier_scale_df_covar[i] ** 2
             line_group_outlier_scale_df_covar = pd.DataFrame(data=features_outlier, columns=['Features'])
-            loading_outlier_scale_dataf_covar = pd.concat([line_group_outlier_scale_df_covar, loading_outlier_scale_df_covar], axis=1)
+            loading_outlier_scale_dataf_covar = pd.concat(
+                [line_group_outlier_scale_df_covar, loading_outlier_scale_df_covar], axis=1)
             data_frame = loading_outlier_scale_dataf_covar
     if all_custom == 'Custom':
         if outlier == 'No' and matrix_type == "Correlation":
@@ -3953,18 +3926,22 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             pca_scale_input_covar = PCA(n_components=len(features_input))
             principalComponents_scale_input_covar = pca_scale_input_covar.fit_transform(x_scale_input_covar)
             principalDf_scale_input_covar = pd.DataFrame(data=principalComponents_scale_input_covar
-                                                   , columns=['PC' + str(i + 1) for i in range(len(features_input))])
-            finalDf_scale_input_covar = pd.concat([df[[df.columns[0]]], principalDf_scale_input_covar, dff_target], axis=1)
+                                                         , columns=['PC' + str(i + 1) for i in
+                                                                    range(len(features_input))])
+            finalDf_scale_input_covar = pd.concat([df[[df.columns[0]]], principalDf_scale_input_covar, dff_target],
+                                                  axis=1)
             dfff_scale_input_covar = finalDf_scale_input_covar.fillna(0)
             Var_scale_input_covar = pca_scale_input_covar.explained_variance_ratio_
             # calculating loading vector plot
-            loading_scale_input_covar = pca_scale_input_covar.components_.T * np.sqrt(pca_scale_input_covar.explained_variance_)
+            loading_scale_input_covar = pca_scale_input_covar.components_.T * np.sqrt(
+                pca_scale_input_covar.explained_variance_)
             loading_scale_input_df_covar = pd.DataFrame(data=loading_scale_input_covar,
-                                                  columns=["PC" + str(i + 1) for i in range(len(features_input))])
+                                                        columns=["PC" + str(i + 1) for i in range(len(features_input))])
             for i in loading_scale_input_df_covar.columns:
                 loading_scale_input_df_covar[i] = loading_scale_input_df_covar[i] ** 2
             line_group_scale_input_df_covar = pd.DataFrame(data=features_input, columns=['Features'])
-            loading_scale_input_dataf_covar = pd.concat([line_group_scale_input_df_covar, loading_scale_input_df_covar], axis=1)
+            loading_scale_input_dataf_covar = pd.concat([line_group_scale_input_df_covar, loading_scale_input_df_covar],
+                                                        axis=1)
             data_frame = loading_scale_input_dataf_covar
         elif outlier == "Yes" and matrix_type == "Covariance":
             dff_input = dff.drop(columns=dff[input])
@@ -3988,10 +3965,11 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             x_scale_input_outlier_covar = dff_input_outlier.loc[:, features_input_outlier].values
             y_scale_input_outlier_covar = dff_input_outlier.loc[:, ].values
             pca_scale_input_outlier_covar = PCA(n_components=len(features_input_outlier))
-            principalComponents_scale_input_outlier_covar = pca_scale_input_outlier_covar.fit_transform(x_scale_input_outlier_covar)
+            principalComponents_scale_input_outlier_covar = pca_scale_input_outlier_covar.fit_transform(
+                x_scale_input_outlier_covar)
             principalDf_scale_input_outlier_covar = pd.DataFrame(data=principalComponents_scale_input_outlier_covar
-                                                           , columns=['PC' + str(i + 1) for i in
-                                                                      range(len(features_input_outlier))])
+                                                                 , columns=['PC' + str(i + 1) for i in
+                                                                            range(len(features_input_outlier))])
             finalDf_scale_input_outlier_covar = pd.concat(
                 [outlier_names_input, principalDf_scale_input_outlier_covar, dff_target_outlier],
                 axis=1)
@@ -4001,8 +3979,8 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             loading_scale_input_outlier_covar = pca_scale_input_outlier_covar.components_.T * np.sqrt(
                 pca_scale_input_outlier_covar.explained_variance_)
             loading_scale_input_outlier_df_covar = pd.DataFrame(data=loading_scale_input_outlier_covar,
-                                                          columns=["PC" + str(i + 1) for i in
-                                                                   range(len(features_input_outlier))])
+                                                                columns=["PC" + str(i + 1) for i in
+                                                                         range(len(features_input_outlier))])
             for i in loading_scale_input_outlier_df_covar.columns:
                 loading_scale_input_outlier_df_covar[i] = (loading_scale_input_outlier_df_covar[i] ** 2)
             line_group_scale_input_outlier_df_covar = pd.DataFrame(data=features_input_outlier, columns=['Features'])
@@ -4020,7 +3998,7 @@ def update_output(all_custom, outlier, input, matrix_type, data):
 
 @app.callback(Output('download-link-contrib', 'download'),
               [Input('eigenA-outlier', 'value'),
-               Input("matrix-type-data-table", 'value'),])
+               Input("matrix-type-data-table", 'value'), ])
 def update_filename(outlier, matrix_type):
     if outlier == 'Yes' and matrix_type == "Correlation":
         download = 'Contributions_correlation_matrix_removed_outliers_data.csv'
@@ -4111,16 +4089,17 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             pca_scale_covar = PCA(n_components=len(features))
             principalComponents_scale_covar = pca_scale_covar.fit_transform(x_scale_covar)
             principalDf_scale_covar = pd.DataFrame(data=principalComponents_scale_covar
-                                             , columns=['PC' + str(i + 1) for i in range(len(features))])
+                                                   , columns=['PC' + str(i + 1) for i in range(len(features))])
             # combining principle components and target
             finalDf_scale_covar = pd.concat([df[[df.columns[0]]], principalDf_scale_covar], axis=1)
             Var_scale_covar = pca_scale_covar.explained_variance_ratio_
             # calculating loading vector plot
             loading_scale_covar = pca_scale_covar.components_.T * np.sqrt(pca_scale_covar.explained_variance_)
             loading_scale_df_covar = pd.DataFrame(data=loading_scale_covar,
-                                            columns=["PC" + str(i + 1) for i in range(len(features))])
+                                                  columns=["PC" + str(i + 1) for i in range(len(features))])
             for i in loading_scale_df_covar.columns:
-                loading_scale_df_covar[i] = ((loading_scale_df_covar[i] ** 2) * 100) / (loading_scale_df_covar[i] ** 2).sum(axis=0)
+                loading_scale_df_covar[i] = ((loading_scale_df_covar[i] ** 2) * 100) / (
+                        loading_scale_df_covar[i] ** 2).sum(axis=0)
             line_group_scale_df_covar = pd.DataFrame(data=features, columns=['Features'])
             loading_scale_dataf_covar = pd.concat([line_group_scale_df_covar, loading_scale_df_covar], axis=1)
             data_frame = loading_scale_dataf_covar
@@ -4139,19 +4118,23 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             pca_outlier_scale_covar = PCA(n_components=len(features_outlier))
             principalComponents_outlier_scale_covar = pca_outlier_scale_covar.fit_transform(x_outlier_scale_covar)
             principalDf_outlier_scale_covar = pd.DataFrame(data=principalComponents_outlier_scale_covar,
-                                                     columns=['PC' + str(i + 1) for i in range(len(features_outlier))])
+                                                           columns=['PC' + str(i + 1) for i in
+                                                                    range(len(features_outlier))])
             finalDf_outlier_scale_covar = pd.concat([outlier_names, principalDf_outlier_scale_covar], axis=1)
             Var_outlier_scale_covar = pca_outlier_scale_covar.explained_variance_ratio_
 
-            loading_outlier_scale_covar = pca_outlier_scale_covar.components_.T * np.sqrt(pca_outlier_scale_covar.explained_variance_)
+            loading_outlier_scale_covar = pca_outlier_scale_covar.components_.T * np.sqrt(
+                pca_outlier_scale_covar.explained_variance_)
             loading_outlier_scale_df_covar = pd.DataFrame(data=loading_outlier_scale_covar,
-                                                    columns=["PC" + str(i + 1) for i in range(len(features_outlier))])
+                                                          columns=["PC" + str(i + 1) for i in
+                                                                   range(len(features_outlier))])
 
             for i in loading_outlier_scale_df_covar.columns:
                 loading_outlier_scale_df_covar[i] = ((loading_outlier_scale_df_covar[i] ** 2) * 100) / (
                         loading_outlier_scale_df_covar[i] ** 2).sum(axis=0)
             line_group_outlier_scale_df_covar = pd.DataFrame(data=features_outlier, columns=['Features'])
-            loading_outlier_scale_dataf_covar = pd.concat([line_group_outlier_scale_df_covar, loading_outlier_scale_df_covar], axis=1)
+            loading_outlier_scale_dataf_covar = pd.concat(
+                [line_group_outlier_scale_df_covar, loading_outlier_scale_df_covar], axis=1)
             data_frame = loading_outlier_scale_dataf_covar
     if all_custom == 'Custom':
         if outlier == 'No' and matrix_type == "Correlation":
@@ -4238,19 +4221,23 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             pca_scale_input_covar = PCA(n_components=len(features_input))
             principalComponents_scale_input_covar = pca_scale_input_covar.fit_transform(x_scale_input_covar)
             principalDf_scale_input_covar = pd.DataFrame(data=principalComponents_scale_input_covar
-                                                   , columns=['PC' + str(i + 1) for i in range(len(features_input))])
-            finalDf_scale_input_covar = pd.concat([df[[df.columns[0]]], principalDf_scale_input_covar, dff_target], axis=1)
+                                                         , columns=['PC' + str(i + 1) for i in
+                                                                    range(len(features_input))])
+            finalDf_scale_input_covar = pd.concat([df[[df.columns[0]]], principalDf_scale_input_covar, dff_target],
+                                                  axis=1)
             dfff_scale_input_covar = finalDf_scale_input_covar.fillna(0)
             Var_scale_input_covar = pca_scale_input_covar.explained_variance_ratio_
             # calculating loading vector plot
-            loading_scale_input_covar = pca_scale_input_covar.components_.T * np.sqrt(pca_scale_input_covar.explained_variance_)
+            loading_scale_input_covar = pca_scale_input_covar.components_.T * np.sqrt(
+                pca_scale_input_covar.explained_variance_)
             loading_scale_input_df_covar = pd.DataFrame(data=loading_scale_input_covar,
-                                                  columns=["PC" + str(i + 1) for i in range(len(features_input))])
+                                                        columns=["PC" + str(i + 1) for i in range(len(features_input))])
             for i in loading_scale_input_df_covar.columns:
                 loading_scale_input_df_covar[i] = ((loading_scale_input_df_covar[i] ** 2) * 100) / (
                         loading_scale_input_df_covar[i] ** 2).sum(axis=0)
             line_group_scale_input_df_covar = pd.DataFrame(data=features_input, columns=['Features'])
-            loading_scale_input_dataf_covar = pd.concat([line_group_scale_input_df_covar, loading_scale_input_df_covar], axis=1)
+            loading_scale_input_dataf_covar = pd.concat([line_group_scale_input_df_covar, loading_scale_input_df_covar],
+                                                        axis=1)
             data_frame = loading_scale_input_dataf_covar
         elif outlier == "Yes" and matrix_type == "Covariance":
             dff_input = dff.drop(columns=dff[input])
@@ -4274,10 +4261,11 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             x_scale_input_outlier_covar = dff_input_outlier.loc[:, features_input_outlier].values
             y_scale_input_outlier_covar = dff_input_outlier.loc[:, ].values
             pca_scale_input_outlier_covar = PCA(n_components=len(features_input_outlier))
-            principalComponents_scale_input_outlier_covar = pca_scale_input_outlier_covar.fit_transform(x_scale_input_outlier_covar)
+            principalComponents_scale_input_outlier_covar = pca_scale_input_outlier_covar.fit_transform(
+                x_scale_input_outlier_covar)
             principalDf_scale_input_outlier_covar = pd.DataFrame(data=principalComponents_scale_input_outlier_covar
-                                                           , columns=['PC' + str(i + 1) for i in
-                                                                      range(len(features_input_outlier))])
+                                                                 , columns=['PC' + str(i + 1) for i in
+                                                                            range(len(features_input_outlier))])
             finalDf_scale_input_outlier_covar = pd.concat(
                 [outlier_names_input, principalDf_scale_input_outlier_covar, dff_target_outlier],
                 axis=1)
@@ -4287,11 +4275,11 @@ def update_output(all_custom, outlier, input, matrix_type, data):
             loading_scale_input_outlier_covar = pca_scale_input_outlier_covar.components_.T * np.sqrt(
                 pca_scale_input_outlier_covar.explained_variance_)
             loading_scale_input_outlier_df_covar = pd.DataFrame(data=loading_scale_input_outlier_covar,
-                                                          columns=["PC" + str(i + 1) for i in
-                                                                   range(len(features_input_outlier))])
+                                                                columns=["PC" + str(i + 1) for i in
+                                                                         range(len(features_input_outlier))])
             for i in loading_scale_input_outlier_df_covar.columns:
                 loading_scale_input_outlier_df_covar[i] = ((loading_scale_input_outlier_df_covar[i] ** 2) * 100) / \
-                                                    (loading_scale_input_outlier_df_covar[i] ** 2).sum(axis=0)
+                                                          (loading_scale_input_outlier_df_covar[i] ** 2).sum(axis=0)
             line_group_scale_input_outlier_df_covar = pd.DataFrame(data=features_input_outlier, columns=['Features'])
             loading_scale_input_outlier_dataf_covar = pd.concat(
                 [line_group_scale_input_outlier_df_covar, loading_scale_input_outlier_df_covar], axis=1)

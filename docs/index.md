@@ -14,10 +14,10 @@ The Principal Component Analysis Visualisation Tools runs PCA for the user and p
 
 ## **Data File Requirements**
 The data file to upload **must** meet the following requirements: <br>
-**1.**	A ```.xlsx, .csv``` or a ```.txt``` data file must be uploaded. Please note that large ```.xlsx``` files take time to process so ```.csv``` or ```.txt``` files are preferred. <br>
+**1.**	A ```.xlsx, .csv``` or a ```.txt``` data file must be uploaded. Please note that large ```.xlsx``` files take time to process so ```.csv``` or ```.txt``` files are preferred. For ```.txt```  files the application only accepts comma text separators.  <br>
 **2.**	The uploaded datasheet must have the structure name or identifier on its first column (shown in table 1). <br>
 **3.**	The uploaded datasheet must be completely populated (no blank cells). Blank cells can be replaced to ‘0’ using the ‘Replace All’ function in Excel <br>
-**4.**	The data must be tidy data. Each variable must occupy a single column and each observation a row. Example data files before e.g. ```AAML_Oxygen_Raw_Data.csv``` and after transposition ``` AAML_Oxygen_Data.csv``` can be found [here](https://github.com/aaml-analytics/pca-explorer/tree/master/sample-data) <br>
+**4.**	The data must be tidy data. Each variable must occupy a single column and each observation a row. Example data files ```AAML_Oxygen_Raw_Data.csv``` and ``` AAML_Oxygen_Data.csv``` are both examples of tiday data and can be found [here](https://github.com/aaml-analytics/pca-explorer/tree/master/sample-data) <br>
 
 ***Table 1: Example File Upload***
 

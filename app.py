@@ -1,6 +1,7 @@
 import base64
 import io
 import textwrap
+from os import truncate
 
 import dash
 import dash_core_components as dcc
@@ -1217,6 +1218,15 @@ def update_graph_stat(outlier, matrix_type, data):
             }
 
 
+def round_up(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.ceil(n * multiplier) / multiplier
+
+def round_down(n, decimals=0):
+    multiplier = 10 ** decimals
+    return math.floor(n * multiplier) / multiplier
+
+
 @app.callback(Output('PC-feature-heatmap', 'figure'),
               [
                   Input('PC-feature-outlier-value', 'value'),
@@ -1328,7 +1338,12 @@ def update_graph_stat(outlier, colorscale, matrix_type, data):
         z=data, x=features_outlier2, y=['PC' + str(i + 1) for i in range(loading_outlier_hm.shape[1])],
         colorscale="Viridis" if colorscale == 'Viridis' else "Plasma",
         # coord: represent the correlation between the various feature and the principal component itself
-        colorbar={"title": "Loading"}))
+        colorbar={"title": "Loading", 'tickvals': [round_up(data.values.min(), 2),
+                                                  round_up((data.values.min() + (data.values.max() + data.values.min())/2)/2, 2),
+                                                   round_down((data.values.max() + data.values.min())/2,2),
+                                                   round_down((data.values.max() + (data.values.max() + data.values.min())/2)/2, 2),
+                                                   round_down(data.values.max(),2), ]}
+    ))
     return {'data': traces,
             'layout': go.Layout(title='<b>PC and Feature Correlation Analysis</b>',
                                 xaxis=dict(title_text='Features', title_standoff=50),

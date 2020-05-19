@@ -40,7 +40,8 @@ tabs_styles = {'height': '40px', 'font-family': 'Arial', 'fontSize': 14}
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
     'padding': '6px',
-    'fontWeight': 'bold'
+    ''
+    'Weight': 'bold'
 }
 
 tab_selected_style = {
@@ -236,6 +237,7 @@ app.layout = html.Div([
                                                              , html.Div(
                                             id='color-range-container')])
                                               ], style={
+                                        'fontSize': 12,
                                         'float': 'right',
                                         'width': '100%',
                                         'padding-left': '85%'}

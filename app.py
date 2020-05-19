@@ -1,7 +1,6 @@
 import base64
 import io
 import textwrap
-from os import truncate
 
 import dash
 import dash_core_components as dcc
@@ -233,6 +232,14 @@ app.layout = html.Div([
                                               ], style={'width': '54%',
                                                         'display': 'inline-block',
                                                         'float': 'left'}),
+                                    html.Div([html.Label(["Loading colour bar range:"
+                                                             , html.Div(
+                                            id='color-range-container')])
+                                              ], style={
+                                        'float': 'right',
+                                        'width': '100%',
+                                        'padding-left': '85%'}
+                                             ),
                                     html.Div(
                                         [html.Label(
                                             ["Remove outliers (if any) in analysis:",
@@ -1222,12 +1229,14 @@ def round_up(n, decimals=0):
     multiplier = 10 ** decimals
     return math.ceil(n * multiplier) / multiplier
 
+
 def round_down(n, decimals=0):
     multiplier = 10 ** decimals
     return math.floor(n * multiplier) / multiplier
 
 
-@app.callback(Output('PC-feature-heatmap', 'figure'),
+@app.callback([Output('PC-feature-heatmap', 'figure'),
+Output('color-range-container', 'children')],
               [
                   Input('PC-feature-outlier-value', 'value'),
                   Input('colorscale', 'value'),
@@ -1334,15 +1343,18 @@ def update_graph_stat(outlier, colorscale, matrix_type, data):
                                                          range(loading_outlier_covar.shape[1])])
         loading_dff_outlier_covar = loading_df_outlier_covar.T
         data = loading_dff_outlier_covar
+    size_range = [round_up(data.values.min(), 2),round_down(data.values.max(),2) ]
     traces.append(go.Heatmap(
         z=data, x=features_outlier2, y=['PC' + str(i + 1) for i in range(loading_outlier_hm.shape[1])],
         colorscale="Viridis" if colorscale == 'Viridis' else "Plasma",
         # coord: represent the correlation between the various feature and the principal component itself
-        colorbar={"title": "Loading", 'tickvals': [round_up(data.values.min(), 2),
-                                                  round_up((data.values.min() + (data.values.max() + data.values.min())/2)/2, 2),
-                                                   round_down((data.values.max() + data.values.min())/2,2),
-                                                   round_down((data.values.max() + (data.values.max() + data.values.min())/2)/2, 2),
-                                                   round_down(data.values.max(),2), ]}
+        colorbar={"title": "Loading",
+                  # 'tickvals': [round_up(data.values.min(), 2),
+                  #  round_up((data.values.min() + (data.values.max() + data.values.min())/2)/2, 2),
+                  #  round_down((data.values.max() + data.values.min())/2,2),
+                  #  round_down((data.values.max() + (data.values.max() + data.values.min())/2)/2, 2),
+                  #  round_down(data.values.max(),2), ]
+                  }
     ))
     return {'data': traces,
             'layout': go.Layout(title='<b>PC and Feature Correlation Analysis</b>',
@@ -1356,7 +1368,7 @@ def update_graph_stat(outlier, colorscale, matrix_type, data):
                                          font=dict(size=12))]
                                 ),
 
-            }
+            }, '{}'.format(size_range)
 
 
 @app.callback(Output('feature-heatmap', 'figure'),
@@ -1393,7 +1405,7 @@ def update_graph_stat(outlier, colorscale, data):
     traces.append(go.Heatmap(
         z=data, x=feat, y=feat, colorscale="Viridis" if colorscale == 'Viridis' else "Plasma",
         # coord: represent the correlation between the various feature and the principal component itself
-        colorbar={"title": "R²"}))
+        colorbar={"title": "R²", 'tickvals': [0, 0.2, 0.4, 0.6, 0.8, 1]}))
     return {'data': traces,
             'layout': go.Layout(title='<b>Feature Correlation Analysis</b>', xaxis={},
                                 titlefont=dict(family='Georgia', size=16),

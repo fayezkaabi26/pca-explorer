@@ -1442,6 +1442,8 @@ def activate_input(all_custom, data):
 def populate_color_dropdown(input, target, outlier, graph_type, matrix_type, data):
     if not data:
         return dash.no_update
+    if input is None:
+        raise dash.exceptions.PreventUpdate
     df = pd.read_json(data, orient='split')
     dff = df.select_dtypes(exclude=['object'])
     dff_target = dff[input]
@@ -1472,6 +1474,8 @@ def populate_color_dropdown(input, target, outlier, graph_type, matrix_type, dat
 def populate_color_dropdown(input, target, outlier, graph_type, matrix_type, data):
     if not data:
         return dash.no_update
+    if input is None:
+        raise dash.exceptions.PreventUpdate
     df = pd.read_json(data, orient='split')
     dff = df.select_dtypes(exclude=['object'])
     dff_target = dff[input]
@@ -1937,6 +1941,8 @@ def update_graph_custom(outlier, input, graph_update, color, target, size, targe
 def update_output(size, outlier, data):
     if not data:
         return dash.no_update
+    if size is None:
+        raise dash.exceptions.PreventUpdate
     df = pd.read_json(data, orient='split')
     dff = df.select_dtypes(exclude=['object'])
     z_scores_dff_size = scipy.stats.zscore(dff)
@@ -4325,6 +4331,6 @@ def update_output(all_custom, outlier, input, matrix_type, data):
 if __name__ == '__main__':
     # For Development only, otherwise use gunicorn or uwsgi to launch, e.g.
     # gunicorn -b 0.0.0.0:8050 index:app.server
-    app.run_server(debug=False)
+    app.run_server(debug=True)
 
 # OUTPUT: YOU SHOULD USE AT LEAST X PRINCIPAL COMPONENTS (≥85% of explained variance)

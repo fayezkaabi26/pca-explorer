@@ -1,1 +1,1 @@
-web: gunicorn app:server
+web: gunicorn app:server --worker-class eventlet --log-level debug 

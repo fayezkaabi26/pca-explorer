@@ -61,7 +61,7 @@ MOF_tool_about = textwrap.wrap(' These tools aim to provide a reproducible and c
                                'Analysis (PCA) is a dimension reduction technique that can be used to reduce a large '
                                'set of observable variables to a smaller set of latent variables that still contain '
                                'most of the information in the large set (feature extraction). This is done by '
-                               'transforming a number of (possibly) correlated variables into a number of orthogonal '
+                               'transforming a number of (possibly) correlated variables into some number of orthogonal '
                                '(uncorrelated) variables called principal components to find the directions of maximal '
                                'variance. PCA can be used to ease data visualisation by having fewer dimensions to plot '
                                'or be used as a pre-processing step before using another Machine Learning (ML)'
@@ -72,27 +72,28 @@ MOF_tool_about = textwrap.wrap(' These tools aim to provide a reproducible and c
 Scree_plot_about = textwrap.wrap(' The Principal Component Analysis Visualisation Tools runs PCA for the user and '
                                  'populates a Scree plot. This plot allows the user to determine if PCA is suitable '
                                  'for '
-                                 'their dataset and if they are able to compromise an X% drop in explained variance to '
+                                 'their dataset and if can compromise an X% drop in explained variance to '
                                  'have fewer dimensions.', width=50)
-Feature_correlation_filter = textwrap.wrap("Feature correlation heatmaps provides users with a feature analysis and "
+Feature_correlation_filter = textwrap.wrap("Feature correlation heatmaps provide users with feature analysis and "
                                            "feature principal component analysis. This tool will allow users to see the"
                                            " correlation between variables and the"
                                            " covariances/correlations between original variables and the "
                                            "principal components (loadings)."
                                            , width=50)
 plots_analysis = textwrap.wrap('Users can keep all variables as features or drop certain variables to produce a '
-                               'Biplot, cos2 plot and contribution plot. The score plot be used to look for clusters, '
+                               'Biplot, cos2 plot and contribution plot. The score plot is used to look for clusters, '
                                'trends, and outliers in the first two principal components. The loading plot is used to'
-                               'visually interpret the first two principal components. The biplot overlays the score '
+                               ' visually interpret the first two principal components. The biplot overlays the score '
                                'plot and the loading plot on the same graph. The squared cosine (cos2) plot shows '
                                'the importance of a component for a given observation i.e. measures '
                                'how much a variable is represented in a component. The contribution plot contains the '
                                'contributions (%) of the variables to the principal components', width=50, )
-data_table_download = textwrap.wrap("The users inputs from the 'Plots' tab will provide the output of the data tables."
+data_table_download = textwrap.wrap("The user's inputs from the 'Plots' tab will provide the output of the data tables."
                                     " The user can download the scores, eigenvalues, explained variance, "
                                     "cumulative explained variance, loadings, "
-                                    "cos2 and contributions from the populated datatables. Note: Wait for user inputs to be"
-                                    "computed (faded tab app will return to original colour) before downloading the"
+                                    "cos2 and contributions from the populated data tables. "
+                                    "Note: Wait for user inputs to be"
+                                    " computed (faded tab app will return to the original colour) before downloading the"
                                     " data tables. ", width=50)
 MOF_GH = textwrap.wrap(" to explore AAML's sample data and read more on"
                        " AAML's Principal Component Analysis Visualisation Tool Manual, FAQ's & Troubleshooting"

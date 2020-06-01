@@ -87,7 +87,7 @@ plots_analysis = textwrap.wrap('Users can keep all variables as features or drop
                                'plot and the loading plot on the same graph. The squared cosine (cos2) plot shows '
                                'the importance of a component for a given observation i.e. measures '
                                'how much a variable is represented in a component. The contribution plot contains the '
-                               'contributions (%) of the variables to the principal components', width=50, )
+                               'contributions (%) of the variables to the principal components.', width=50, )
 data_table_download = textwrap.wrap("The user's inputs from the 'Plots' tab will provide the output of the data tables."
                                     " The user can download the scores, eigenvalues, explained variance, "
                                     "cumulative explained variance, loadings, "

@@ -40,15 +40,14 @@ tabs_styles = {'height': '40px', 'font-family': 'Arial', 'fontSize': 14}
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
     'padding': '6px',
-    ''
     'Weight': 'bold'
 }
 
 tab_selected_style = {
-    'borderTop': '3px solid #4a4a4a',
+    'borderTop': '3px solid #333333',
     'borderBottom': '1px solid #d6d6d6 ',
     'backgroundColor': '#f6f6f6',
-    'color': '#4a4a4a',
+    'color': '#333333',
     # 'fontColor': '#004a4a',
     'fontWeight': 'bold',
     'padding': '6px'
@@ -87,7 +86,7 @@ plots_analysis = textwrap.wrap('Users can keep all variables as features or drop
                                'plot and the loading plot on the same graph. The squared cosine (cos2) plot shows '
                                'the importance of a component for a given observation i.e. measures '
                                'how much a variable is represented in a component. The contribution plot contains the '
-                               'contributions (%) of the variables to the principal components.', width=50, )
+                               'contributions (%) of the variables to the principal components', width=50, )
 data_table_download = textwrap.wrap("The user's inputs from the 'Plots' tab will provide the output of the data tables."
                                     " The user can download the scores, eigenvalues, explained variance, "
                                     "cumulative explained variance, loadings, "
@@ -108,19 +107,19 @@ app.layout = html.Div([
     html.Div([
         html.Img(
             src='https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/UOC.png',
-            height='35', width='135', style={'display': 'inline-block', 'padding-left': '1%'}),
+            height='35', width='140', style={'display': 'inline-block', 'padding-left': '1%'}),
         html.Img(src='https://raw.githubusercontent.com/aaml-analytics/mof-explorer/master/A2ML-logo.png',
                  height='50', width='125', style={'float': 'right', 'display': 'inline-block', 'padding-right': '2%'}),
         html.H1("Principal Component Analysis Visualisation Tools",
                 style={'display': 'inline-block', 'padding-left': '11%', 'text-align': 'center', 'fontSize': 36,
-                       'color': 'white', 'font-family': 'Georgia'}),
+                       'color': 'white', 'font-family': 'Raleway'}),
         html.H1("...", style={'fontColor': '#3c3c3c', 'fontSize': 6})
-    ], style={'backgroundColor': '#3d0027'}),
+    ], style={'backgroundColor': '#333333'}),
     html.Div([html.A('Refresh', href='/')], style={}),
     html.Div([
-        html.H2("Upload Data", style={'fontSize': 24, 'font-family': 'Arial', 'color': '#3d0027'}, ),
+        html.H2("Upload Data", style={'fontSize': 24, 'font-family': 'Raleway', 'color': '#333333'}, ),
         html.H3("Upload .txt, .csv or .xls files to starting exploring data...", style={'fontSize': 16,
-                                                                                        'font-family': 'Arial'}),
+                                                                                        'font-family': 'Raleway'}),
         dcc.Store(id='csv-data', storage_type='session', data=None),
         html.Div([dcc.Upload(
             id='data-table-upload',
@@ -137,36 +136,36 @@ app.layout = html.Div([
     html.Div([dcc.Tabs([
         dcc.Tab(label='About', style=tab_style, selected_style=tab_selected_style,
                 children=[html.Div([html.H2(" What are AAML's Principal Component Analysis Visualisation Tools?",
-                                            style={'fontSize': 18, 'font-family': 'Arial', 'font-weight': 'bold'
+                                            style={'fontSize': 18, 'font-family': 'Raleway', 'font-weight': 'bold'
                                                    }),
                                     html.Div([' '.join(MOF_tool_about)]
-                                             , style={'font-family': 'Arial'}),
+                                             , style={'font-family': 'Raleway'}),
                                     html.H2(["Scree Plot"],
                                             style={'fontSize': 18,
-                                                   'font-family': 'Arial', 'font-weight': 'bold'}),
-                                    html.Div([' '.join(Scree_plot_about)], style={'font-family': 'Arial'}),
+                                                   'font-family': 'Raleway', 'font-weight': 'bold'}),
+                                    html.Div([' '.join(Scree_plot_about)], style={'font-family': 'Raleway'}),
                                     html.H2(["Feature Correlation"], style={'fontSize': 18,
                                                                             'font-weight': 'bold',
-                                                                            'font-family': 'Arial'}),
-                                    html.Div([' '.join(Feature_correlation_filter)], style={'font-family': 'Arial', }),
+                                                                            'font-family': 'Raleway'}),
+                                    html.Div([' '.join(Feature_correlation_filter)], style={'font-family': 'Raleway', }),
                                     html.H2(["Plots"],
                                             style={'fontSize': 18, 'font-weight': 'bold',
-                                                   'font-family': 'Arial'}),
-                                    html.Div([' '.join(plots_analysis)], style={'font-family': 'Arial'}),
+                                                   'font-family': 'Raleway'}),
+                                    html.Div([' '.join(plots_analysis)], style={'font-family': 'Raleway'}),
                                     html.H2(["Data tables"],
                                             style={'fontSize': 18, 'font-weight': 'bold',
-                                                   'font-family': 'Arial'}),
-                                    html.Div([' '.join(data_table_download)], style={'font-family': 'Arial'}),
+                                                   'font-family': 'Raleway'}),
+                                    html.Div([' '.join(data_table_download)], style={'font-family': 'Raleway'}),
 
                                     # ADD LINK
                                     html.Div([html.Plaintext(
                                         [' Click ', html.A('here ',
                                                            href='https://github.com/aaml-analytics/pca-explorer')],
                                         style={'display': 'inline-block',
-                                               'fontSize': 14, 'font-family': 'Arial'}),
+                                               'fontSize': 14, 'font-family': 'Raleway'}),
                                         html.Div([' '.join(MOF_GH)], style={'display': 'inline-block',
                                                                             'fontSize': 14,
-                                                                            'font-family': 'Arial'}),
+                                                                            'font-family': 'Raleway'}),
                                         html.Img(
                                             src='https://raw.githubusercontent.com/aaml-analytics/mof'
                                                 '-explorer/master/github.png',
@@ -227,11 +226,11 @@ app.layout = html.Div([
         dcc.Tab(label='Feature correlation', style=tab_style,
                 selected_style=tab_selected_style,
                 children=[html.Div([html.Div([dcc.Graph(id='PC-feature-heatmap')
-                                              ], style={'width': '44%',
+                                              ], style={'width': '47%',
                                                         'display': 'inline-block',
                                                         'float': 'right'}),
                                     html.Div([dcc.Graph(id='feature-heatmap')
-                                              ], style={'width': '54%',
+                                              ], style={'width': '51%',
                                                         'display': 'inline-block',
                                                         'float': 'left'}),
                                     html.Div([html.Label(["Loading colour bar range:"
@@ -767,7 +766,7 @@ app.layout = html.Div([
                     ], style={'padding': 20}),
                 ])])
     ])
-    ])])
+    ], style={'font-family': 'Raleway'})])
 
 
 # READ FILE
@@ -778,12 +777,14 @@ def parse_contents(contents, filename):
         if 'csv' in filename:
             # Assume that the user uploaded a CSV file
             df = pd.read_csv(io.StringIO(decoded.decode('utf-8')))
+            df.fillna(0)
         elif 'xls' in filename:
             # Assume that the user uploaded an excel file
             df = pd.read_excel(io.BytesIO(decoded))
+            df.fillna(0)
         elif 'txt' or 'tsv' in filename:
-            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+'
-                             )
+            df = pd.read_csv(io.StringIO(decoded.decode('utf-8')), delimiter=r'\s+')
+            df.fillna(0)
     except Exception as e:
         print(e)
         return html.Div([
@@ -799,6 +800,7 @@ def parse_uploaded_file(contents, filename):
     if not filename:
         return dash.no_update
     df = parse_contents(contents, filename)
+    df.fillna(0)
     return df.to_json(date_format='iso', orient='split')
 
 
@@ -919,7 +921,7 @@ def update_graph_stat(outlier, matrix_type, data):
     return {'data': traces,
 
             'layout': go.Layout(title='<b>Cumulative Scree Plot Proportion of Explained Variance</b>',
-                                titlefont=dict(family='Georgia', size=16),
+                                titlefont=dict(family='Helvetica', size=16),
                                 xaxis={'title': 'Principal Component'}, yaxis={'title': 'Cumulative Explained Variance',
                                                                                'range': [0, 100]},
                                 hovermode='closest', font=dict(family="Helvetica"), template="simple_white")
@@ -1222,7 +1224,7 @@ def update_graph_stat(outlier, matrix_type, data):
     return {'data': traces,
 
             'layout': go.Layout(title='<b>Scree Plot Eigenvalues</b>', xaxis={'title': 'Principal Component'},
-                                titlefont=dict(family='Georgia', size=16),
+                                titlefont=dict(family='Helvetica', size=16),
                                 yaxis={'title': 'Eigenvalues'}, hovermode='closest',
                                 font=dict(family="Helvetica"), template="simple_white", )
             }
@@ -1360,9 +1362,9 @@ def update_graph_stat(outlier, colorscale, matrix_type, data):
                   }
     ))
     return {'data': traces,
-            'layout': go.Layout(title='<b>PC and Feature Correlation Analysis</b>',
+            'layout': go.Layout(title=dict(text='<b>PC and Feature Correlation Analysis</b>'),
                                 xaxis=dict(title_text='Features', title_standoff=50),
-                                titlefont=dict(family='Georgia', size=16),
+                                titlefont=dict(family='Helvetica', size=16),
                                 hovermode='closest', margin={'b': 110, 't': 50, 'l': 75},
                                 font=dict(family="Helvetica", size=11),
                                 annotations=[
@@ -1410,8 +1412,9 @@ def update_graph_stat(outlier, colorscale, data):
         # coord: represent the correlation between the various feature and the principal component itself
         colorbar={"title": "R²", 'tickvals': [0, 0.2, 0.4, 0.6, 0.8, 1]}))
     return {'data': traces,
-            'layout': go.Layout(title='<b>Feature Correlation Analysis</b>', xaxis={},
-                                titlefont=dict(family='Georgia', size=16),
+            'layout': go.Layout(title=dict(text='<b>Feature Correlation Analysis</b>', y=0.97, x=0.6),
+                                xaxis={},
+                                titlefont=dict(family='Helvetica', size=16),
                                 yaxis={},
                                 hovermode='closest', margin={'b': 110, 't': 50, 'l': 180, 'r': 50},
                                 font=dict(family="Helvetica", size=11)),
@@ -4332,6 +4335,6 @@ def update_output(all_custom, outlier, input, matrix_type, data):
 if __name__ == '__main__':
     # For Development only, otherwise use gunicorn or uwsgi to launch, e.g.
     # gunicorn -b 0.0.0.0:8050 index:app.server
-    app.run_server(debug=True)
+    app.run_server()
 
 # OUTPUT: YOU SHOULD USE AT LEAST X PRINCIPAL COMPONENTS (≥85% of explained variance)

@@ -36,7 +36,7 @@ styles = {
         'overflowX': 'scroll'
     }
 }
-tabs_styles = {'height': '40px', 'font-family': 'Arial', 'fontSize': 14}
+tabs_styles = {'height': '40px', 'font-family': 'Raleway', 'fontSize': 14}
 tab_style = {
     'borderBottom': '1px solid #d6d6d6',
     'padding': '6px',

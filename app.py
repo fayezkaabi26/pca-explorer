@@ -1683,6 +1683,12 @@ def update_graph_custom(outlier, input, graph_update, color, target, size, targe
             trace1_all = go.Scatter(x=dataf_all['PC1'], y=dataf_all['PC2'], line=dict(color="#4f4f4f"),
                                     name=i,
                                     # text=i,
+                                    meta=i,
+                                    hovertemplate=
+                                    '<b>%{meta}</b>' +
+                                    '<br>PC1: %{x}<br>' +
+                                    'PC2: %{y}'
+                                    "<extra></extra>",
                                     mode='lines+text',
                                     textposition='bottom right', textfont=dict(size=12)
                                     )
@@ -1906,6 +1912,12 @@ def update_graph_custom(outlier, input, graph_update, color, target, size, targe
             trace1 = go.Scatter(x=dataf['PC1'], y=dataf['PC2'],
                                 line=dict(color="#666666" if target == 'Yes' else '#4f4f4f'), name=i,
                                 # text=i,
+                                meta=i,
+                                hovertemplate=
+                                '<b>%{meta}</b>' +
+                                '<br>PC1: %{x}<br>' +
+                                'PC2: %{y}'
+                                "<extra></extra>",
                                 mode='lines+text', textposition='bottom right', textfont=dict(size=12),
                                 )
             lists[counter] = trace1
@@ -2138,6 +2150,12 @@ def update_cos2_plot(outlier, input, all_custom, matrix_type, data):
             trace1_all = go.Scatter(x=dataf_all['PC1'], y=dataf_all['PC2'], mode='lines+text',
                                     name=i, line=dict(color=colorscale[counter_color]),
                                     # text=i,
+                                    meta=i,
+                                    hovertemplate=
+                                    '<b>%{meta}</b>' +
+                                    '<br>PC1: %{x}<br>' +
+                                    'PC2: %{y}'
+                                    "<extra></extra>",
                                     textposition='bottom right', textfont=dict(size=12)
                                     )
             trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers',
@@ -2359,6 +2377,12 @@ def update_cos2_plot(outlier, input, all_custom, matrix_type, data):
             dataf = data[data['line_group'] == i]
             trace1 = go.Scatter(x=dataf['PC1'], y=dataf['PC2'], name=i, line=dict(color=colorscale[counter_color]),
                                 mode='lines+text', textposition='bottom right', textfont=dict(size=12),
+                                meta=i,
+                                hovertemplate=
+                                '<b>%{meta}</b>' +
+                                '<br>PC1: %{x}<br>' +
+                                'PC2: %{y}'
+                                "<extra></extra>",
                                 )
             trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers', hoverinfo='skip',
                                     marker=dict(showscale=True, color=[data["cos2"].min(), data["cos2"].max()],
@@ -2581,7 +2605,13 @@ def update_cos2_plot(outlier, input, all_custom, matrix_type, data):
             dataf_all = data[data['line_group'] == i]
             trace1_all = go.Scatter(x=dataf_all['PC1'], y=dataf_all['PC2'], mode='lines+text',
                                     name=i, line=dict(color=colorscale[counter_color]),
-                                    textposition='bottom right', textfont=dict(size=12)
+                                    textposition='bottom right', textfont=dict(size=12),
+                                    meta=i,
+                                    hovertemplate=
+                                    '<b>%{meta}</b>' +
+                                    '<br>PC1: %{x}<br>' +
+                                    'PC2: %{y}'
+                                    "<extra></extra>",
                                     )
             trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers', hoverinfo='skip',
                                     marker=dict(showscale=True, opacity=0,
@@ -2831,6 +2861,12 @@ def update_cos2_plot(outlier, input, all_custom, matrix_type, data):
             dataf = data[data['line_group'] == i]
             trace1 = go.Scatter(x=dataf['PC1'], y=dataf['PC2'], name=i, line=dict(color=colorscale[counter_color]),
                                 mode='lines+text', textposition='bottom right', textfont=dict(size=12),
+                                meta=i,
+                                hovertemplate=
+                                '<b>%{meta}</b>' +
+                                '<br>PC1: %{x}<br>' +
+                                'PC2: %{y}'
+                                "<extra></extra>",
                                 )
             trace2_all = go.Scatter(x=[1, -1], y=[1, -1], mode='markers', hoverinfo='skip',
                                     marker=dict(showscale=True, color=[data["contrib"].min(), data["contrib"].max()],

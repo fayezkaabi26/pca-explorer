@@ -8,6 +8,9 @@ These tools aim to provide a reproducible and consistent data visualisation plat
 ### App Manual
 - The app manual, explaining data file upload requirements, features of the tool and how to read the plot outputs can be found [here](https://aaml-analytics.github.io/pca-explorer/)
 
+## Deployment options
+- Users can deploy using the push Heroku button or deploy the app using command line, to either a development or production server. Command line is recommended as app requests are quicker.
+
 ## Deploying to Heroku
 ```bash
 heroku create

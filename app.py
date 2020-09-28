@@ -25,7 +25,8 @@ import dash_bootstrap_components as dbc
 
 external_stylesheets = [dbc.themes.BOOTSTRAP, 'https://codepen.io/chriddyp/pen/bWLwgP.css',
                         "https://codepen.io/sutharson/pen/dyYzEGZ.css",
-                        "https://fonts.googleapis.com/css2?family=Raleway&display=swap"]
+                        "https://fonts.googleapis.com/css2?family=Raleway&display=swap",
+                       "https://codepen.io/chriddyp/pen/brPBPO.css"]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 server = app.server
